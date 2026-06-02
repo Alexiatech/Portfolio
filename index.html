@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Anika Wiersma — Urban Planner. Designing greener, more livable cities through thoughtful, people-first planning." />
+  <title>Anika Wiersma · Urban Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Decide whether to show the intro before paint (avoids flicker) -->
+  <script>
+    (function () {
+      var html = document.documentElement;
+      try {
+        var seen = localStorage.getItem("anikaIntroSeen");
+        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        html.classList.add(seen || reduce ? "intro-skip" : "intro-on");
+      } catch (e) {
+        html.classList.add("intro-on");
+      }
+      // Failsafe: no matter what happens, never leave the page locked
+      // behind the intro overlay. Always release after 6 seconds.
+      window.setTimeout(function () {
+        html.classList.remove("intro-on");
+        var n = document.getElementById("intro");
+        if (n && n.parentNode) n.parentNode.removeChild(n);
+      }, 6000);
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- ===== Intro animation (name → little city → reveal) ===== -->
+  <div class="intro" id="intro" role="presentation">
+    <div class="intro-inner">
+      <div class="intro-name" id="introName" aria-label="Anika">
+        <span class="ltr-mask"><span class="ltr" style="--i:0">A</span></span>
+        <span class="ltr-mask"><span class="ltr" style="--i:1">n</span></span>
+        <span class="ltr-mask"><span class="ltr" style="--i:2">i</span></span>
+        <span class="ltr-mask"><span class="ltr" style="--i:3">k</span></span>
+        <span class="ltr-mask"><span class="ltr" style="--i:4">a</span></span>
+      </div>
+
+      <svg class="intro-skyline" viewBox="0 0 600 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+        <!-- ground -->
+        <line class="ground" x1="40" y1="210" x2="560" y2="210" />
+
+        <!-- buildings (rise from the ground) -->
+        <g class="bld" style="--d:0.00s">
+          <rect x="150" y="138" width="44" height="72" rx="3" fill="#5a6b4a" />
+          <rect class="win" x="158" y="150" width="9" height="11" /><rect class="win" x="176" y="150" width="9" height="11" />
+          <rect class="win" x="158" y="170" width="9" height="11" /><rect class="win" x="176" y="170" width="9" height="11" />
+          <rect class="win" x="158" y="190" width="9" height="11" /><rect class="win" x="176" y="190" width="9" height="11" />
+        </g>
+
+        <g class="bld" style="--d:0.10s">
+          <rect x="202" y="96" width="50" height="114" rx="3" fill="#b8593a" />
+          <polygon class="roof" points="202,96 227,78 252,96" fill="#9a4528" />
+          <rect class="win" x="211" y="108" width="10" height="12" /><rect class="win" x="232" y="108" width="10" height="12" />
+          <rect class="win" x="211" y="130" width="10" height="12" /><rect class="win" x="232" y="130" width="10" height="12" />
+          <rect class="win" x="211" y="152" width="10" height="12" /><rect class="win" x="232" y="152" width="10" height="12" />
+          <rect class="win" x="211" y="174" width="10" height="12" /><rect class="win" x="232" y="174" width="10" height="12" />
+        </g>
+
+        <g class="bld" style="--d:0.22s">
+          <rect x="262" y="58" width="42" height="152" rx="3" fill="#3a352f" />
+          <rect class="win" x="270" y="72" width="9" height="11" /><rect class="win" x="287" y="72" width="9" height="11" />
+          <rect class="win" x="270" y="92" width="9" height="11" /><rect class="win" x="287" y="92" width="9" height="11" />
+          <rect class="win" x="270" y="112" width="9" height="11" /><rect class="win" x="287" y="112" width="9" height="11" />
+          <rect class="win" x="270" y="132" width="9" height="11" /><rect class="win" x="287" y="132" width="9" height="11" />
+          <rect class="win" x="270" y="152" width="9" height="11" /><rect class="win" x="287" y="152" width="9" height="11" />
+          <rect class="win" x="270" y="172" width="9" height="11" /><rect class="win" x="287" y="172" width="9" height="11" />
+        </g>
+
+        <g class="bld" style="--d:0.34s">
+          <rect x="314" y="118" width="48" height="92" rx="3" fill="#7d8c6a" />
+          <rect class="win" x="323" y="132" width="10" height="12" /><rect class="win" x="343" y="132" width="10" height="12" />
+          <rect class="win" x="323" y="154" width="10" height="12" /><rect class="win" x="343" y="154" width="10" height="12" />
+          <rect class="win" x="323" y="176" width="10" height="12" /><rect class="win" x="343" y="176" width="10" height="12" />
+        </g>
+
+        <g class="bld" style="--d:0.46s">
+          <rect x="372" y="78" width="46" height="132" rx="3" fill="#9a4528" />
+          <rect class="win" x="381" y="92" width="10" height="12" /><rect class="win" x="401" y="92" width="10" height="12" />
+          <rect class="win" x="381" y="114" width="10" height="12" /><rect class="win" x="401" y="114" width="10" height="12" />
+          <rect class="win" x="381" y="136" width="10" height="12" /><rect class="win" x="401" y="136" width="10" height="12" />
+          <rect class="win" x="381" y="158" width="10" height="12" /><rect class="win" x="401" y="158" width="10" height="12" />
+        </g>
+
+        <g class="bld" style="--d:0.58s">
+          <rect x="428" y="150" width="40" height="60" rx="3" fill="#b8593a" />
+          <rect class="win" x="436" y="162" width="9" height="11" /><rect class="win" x="452" y="162" width="9" height="11" />
+          <rect class="win" x="436" y="182" width="9" height="11" /><rect class="win" x="452" y="182" width="9" height="11" />
+        </g>
+
+        <!-- trees (pop in) -->
+        <g class="tree" style="--d:0.00s">
+          <rect x="126" y="186" width="7" height="24" rx="2" fill="#3a352f" />
+          <circle cx="129.5" cy="178" r="17" fill="#5a6b4a" />
+          <circle cx="120" cy="186" r="11" fill="#7d8c6a" />
+          <circle cx="139" cy="186" r="11" fill="#7d8c6a" />
+        </g>
+        <g class="tree" style="--d:0.16s">
+          <rect x="304" y="184" width="8" height="26" rx="2" fill="#3a352f" />
+          <circle cx="308" cy="174" r="19" fill="#5a6b4a" />
+          <circle cx="297" cy="184" r="12" fill="#7d8c6a" />
+          <circle cx="319" cy="184" r="12" fill="#7d8c6a" />
+        </g>
+        <g class="tree" style="--d:0.30s">
+          <rect x="478" y="188" width="7" height="22" rx="2" fill="#3a352f" />
+          <circle cx="481.5" cy="180" r="16" fill="#5a6b4a" />
+          <circle cx="472" cy="187" r="10" fill="#7d8c6a" />
+          <circle cx="491" cy="187" r="10" fill="#7d8c6a" />
+        </g>
+      </svg>
+    </div>
+
+    <button class="intro-skip" id="introSkip" type="button">Skip &rarr;</button>
+  </div>
+
+
+  <!-- ===== Navigation ===== -->
+  <header class="site-header" id="top">
+    <nav class="nav container">
+      <a href="#top" class="logo">Anika<span>.</span></a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#play">Play</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#contact" class="nav-cta">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ===== Hero ===== -->
+    <section class="hero" id="hero">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow reveal">Urban Planner · Sustainable Cities</p>
+          <h1 class="reveal">Designing cities that<br />work for <em id="rotateWord" class="rotate-word">people</em>.</h1>
+          <p class="hero-lede reveal">
+            I'm Anika — an urban planner focused on greener, more walkable, more
+            human neighborhoods. I help communities turn ideas into places worth
+            living in.
+          </p>
+          <div class="hero-actions reveal">
+            <a href="#projects" class="btn btn-primary">View my work</a>
+            <a href="#contact" class="btn btn-ghost">Get in touch</a>
+          </div>
+        </div>
+
+        <div class="hero-stage reveal">
+          <canvas id="village" aria-label="Interactive 3D village you can drag to rotate"></canvas>
+          <p class="stage-hint">↻ Drag to spin · scroll to zoom</p>
+        </div>
+      </div>
+      <div class="hero-scroll" aria-hidden="true">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- ===== About ===== -->
+    <section class="about section" id="about">
+      <div class="container about-grid">
+        <div class="about-media reveal">
+          <div class="about-photo" role="img" aria-label="Portrait of Anika">
+            <span>Your photo here</span>
+          </div>
+        </div>
+        <div class="about-text reveal">
+          <p class="eyebrow">About</p>
+          <h2>Planning with people, place, and the planet in mind.</h2>
+          <p>
+            With a background in urban design and community planning, I work at
+            the intersection of policy, sustainability, and everyday life. My
+            approach is collaborative: I listen first, map the realities on the
+            ground, and build plans that neighborhoods actually want.
+          </p>
+          <p>
+            From transit corridors to pocket parks, I care about the small
+            details that make a city feel alive — shade on a sidewalk, a safe
+            crossing, a place to sit.
+          </p>
+          <ul class="about-skills">
+            <li>Community Engagement</li>
+            <li>Land-Use Planning</li>
+            <li>GIS &amp; Mapping</li>
+            <li>Sustainable Mobility</li>
+            <li>Zoning &amp; Policy</li>
+            <li>Placemaking</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Projects ===== -->
+    <section class="projects section" id="projects">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Selected Work</p>
+          <h2>Projects</h2>
+          <p class="section-sub">
+            A few projects that capture how I think about cities. Replace these
+            with Anika's real work, photos, and outcomes.
+          </p>
+        </div>
+
+        <div class="project-grid">
+          <article class="project-card reveal">
+            <div class="project-thumb thumb-1" aria-hidden="true"></div>
+            <div class="project-body">
+              <span class="project-tag">Public Space</span>
+              <h3>Riverside Greenway</h3>
+              <p>
+                Transformed an underused industrial waterfront into a 4 km
+                public greenway with native planting and protected bike paths.
+              </p>
+              <a href="#" class="project-link">Read case study →</a>
+            </div>
+          </article>
+
+          <article class="project-card reveal">
+            <div class="project-thumb thumb-2" aria-hidden="true"></div>
+            <div class="project-body">
+              <span class="project-tag">Mobility</span>
+              <h3>15-Minute Neighborhood</h3>
+              <p>
+                A planning framework helping residents reach daily needs within
+                a short walk or ride — reducing car dependence by 30%.
+              </p>
+              <a href="#" class="project-link">Read case study →</a>
+            </div>
+          </article>
+
+          <article class="project-card reveal">
+            <div class="project-thumb thumb-3" aria-hidden="true"></div>
+            <div class="project-body">
+              <span class="project-tag">Housing</span>
+              <h3>Maple District Rezoning</h3>
+              <p>
+                Led community-driven rezoning enabling mixed-income housing while
+                preserving the neighborhood's character and tree canopy.
+              </p>
+              <a href="#" class="project-link">Read case study →</a>
+            </div>
+          </article>
+
+          <article class="project-card reveal">
+            <div class="project-thumb thumb-4" aria-hidden="true"></div>
+            <div class="project-body">
+              <span class="project-tag">Climate</span>
+              <h3>Cool Streets Initiative</h3>
+              <p>
+                A heat-resilience plan adding shade, green corridors, and
+                permeable surfaces across the city's hottest districts.
+              </p>
+              <a href="#" class="project-link">Read case study →</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Mini-game: Plan a city ===== -->
+    <section class="game section" id="play">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Try it yourself</p>
+          <h2>Plan your own city</h2>
+          <p class="section-sub">
+            A great city balances homes and green space. Pick a tile, draw on the
+            grid, and watch your urban-planning score react in real time. Can you
+            reach 80+?
+          </p>
+        </div>
+
+        <div class="game-wrap reveal">
+          <div class="board-wrap">
+            <div class="toolbar" id="toolbar">
+              <button class="tool active" data-tool="park" type="button">Park</button>
+              <button class="tool" data-tool="house" type="button">House</button>
+              <button class="tool" data-tool="building" type="button">Building</button>
+              <button class="tool" data-tool="water" type="button">Water</button>
+              <button class="tool" data-tool="road" type="button">Road</button>
+              <button class="tool" data-tool="erase" type="button">Erase</button>
+            </div>
+
+            <div class="city-grid" id="cityGrid" role="grid" aria-label="City building grid"></div>
+
+            <div class="game-actions">
+              <button class="btn btn-soft" id="demoCity" type="button">Show example</button>
+              <button class="btn btn-soft" id="resetCity" type="button">Clear</button>
+            </div>
+          </div>
+
+          <aside class="panel">
+            <div class="overall">
+              <div class="overall-top">
+                <span>Urban-planning score</span>
+                <span id="overallVal">0</span>
+              </div>
+              <div class="overall-track">
+                <div class="overall-fill" id="overallFill"></div>
+                <div class="goal" title="Goal: 80"></div>
+              </div>
+              <p class="rating"><span id="rating">Start building…</span><small id="tip">Pick a tile, then click or drag on the grid.</small></p>
+            </div>
+
+            <div class="meters">
+              <div class="meter">
+                <div class="meter-top"><span>Green &amp; parks</span><span class="meter-val" id="val-greenery">0</span></div>
+                <div class="meter-track"><div class="meter-fill fill-green" id="fill-greenery"></div></div>
+              </div>
+              <div class="meter">
+                <div class="meter-top"><span>Homes &amp; people</span><span class="meter-val" id="val-housing">0</span></div>
+                <div class="meter-track"><div class="meter-fill fill-clay" id="fill-housing"></div></div>
+              </div>
+              <div class="meter">
+                <div class="meter-top"><span>Green near homes</span><span class="meter-val" id="val-livability">0</span></div>
+                <div class="meter-track"><div class="meter-fill fill-green" id="fill-livability"></div></div>
+              </div>
+              <div class="meter">
+                <div class="meter-top"><span>Water &amp; nature</span><span class="meter-val" id="val-nature">0</span></div>
+                <div class="meter-track"><div class="meter-fill fill-water" id="fill-nature"></div></div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Experience / CV ===== -->
+    <section class="experience section" id="experience">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Background</p>
+          <h2>Experience &amp; Education</h2>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item reveal">
+            <div class="timeline-date">2022 — Present</div>
+            <div class="timeline-content">
+              <h3>Senior Urban Planner</h3>
+              <p class="timeline-org">City Planning Department</p>
+              <p>
+                Lead planner on neighborhood revitalization and sustainable
+                mobility projects, coordinating across agencies and communities.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal">
+            <div class="timeline-date">2019 — 2022</div>
+            <div class="timeline-content">
+              <h3>Urban Planner</h3>
+              <p class="timeline-org">Studio for Civic Design</p>
+              <p>
+                Delivered master plans, zoning analyses, and public engagement
+                strategies for mid-sized municipalities.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal">
+            <div class="timeline-date">2017 — 2019</div>
+            <div class="timeline-content">
+              <h3>Master of Urban Planning</h3>
+              <p class="timeline-org">University of Design &amp; Society</p>
+              <p>
+                Specialization in sustainable development and transportation
+                planning. Thesis on equitable access to green space.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal">
+            <div class="timeline-date">2013 — 2017</div>
+            <div class="timeline-content">
+              <h3>BSc Geography &amp; Spatial Planning</h3>
+              <p class="timeline-org">University of Design &amp; Society</p>
+              <p>
+                Foundations in GIS, demographics, and the systems that shape how
+                cities grow.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="cv-cta reveal">
+          <a href="#" class="btn btn-primary">Download full CV (PDF)</a>
+        </div>
+      </div>
+    </section>
+
+
+
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© <span id="year"></span> Anika Wiersma · Urban Planner</p>
+      <a href="#top" class="back-to-top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script src="intro.js"></script>
+  <script src="script.js"></script>
+  <script src="game.js"></script>
+
+  <!-- ===== 3D Village (Three.js) ===== -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+    const canvas = document.getElementById("village");
+    if (canvas && window.WebGLRenderingContext) {
+      try { initCity(canvas); }
+      catch (err) { console.warn("3D city could not start:", err); }
+    }
+
+    function initCity(canvas) {
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+
+      const scene = new THREE.Scene();
+
+      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 200);
+      camera.position.set(17, 13, 17);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.enablePan = false;
+      controls.minDistance = 12;
+      controls.maxDistance = 38;
+      controls.minPolarAngle = Math.PI / 7;
+      controls.maxPolarAngle = Math.PI * 0.54;   // dip slightly to reveal the floating underside
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.6;
+      controls.target.set(0, 2.2, 0);
+
+      let idle;
+      controls.addEventListener("start", () => { controls.autoRotate = false; clearTimeout(idle); });
+      controls.addEventListener("end", () => {
+        clearTimeout(idle);
+        idle = setTimeout(() => { controls.autoRotate = true; }, 2500);
+      });
+
+      // ---- Lighting ----
+      scene.add(new THREE.HemisphereLight(0xfff5e6, 0x6b5b45, 0.7));
+      scene.add(new THREE.AmbientLight(0xffffff, 0.32));
+      const sun = new THREE.DirectionalLight(0xfff1dd, 1.2);
+      sun.position.set(13, 20, 9);
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(2048, 2048);
+      const s = 13;
+      Object.assign(sun.shadow.camera, { left: -s, right: s, top: s, bottom: -s, near: 1, far: 70 });
+      sun.shadow.bias = -0.0004;
+      scene.add(sun);
+
+      // ---- Helpers ----
+      const mat = (color, extra = {}) =>
+        new THREE.MeshStandardMaterial({ color, flatShading: true, roughness: 0.92, metalness: 0, ...extra });
+      const hex = (n) => "#" + n.toString(16).padStart(6, "0");
+
+      // deterministic pseudo-random so the layout is stable each load
+      let seed = 1337;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+      const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
+
+      const city = new THREE.Group();
+      scene.add(city);
+
+      // ====== Floating island base ======
+      function roundedRect(w, d, r) {
+        const sh = new THREE.Shape();
+        const x = -w / 2, y = -d / 2;
+        sh.moveTo(x + r, y);
+        sh.lineTo(x + w - r, y); sh.quadraticCurveTo(x + w, y, x + w, y + r);
+        sh.lineTo(x + w, y + d - r); sh.quadraticCurveTo(x + w, y + d, x + w - r, y + d);
+        sh.lineTo(x + r, y + d); sh.quadraticCurveTo(x, y + d, x, y + d - r);
+        sh.lineTo(x, y + r); sh.quadraticCurveTo(x, y, x + r, y);
+        return sh;
+      }
+      function plate(w, d, h, r, color, cy) {
+        const geo = new THREE.ExtrudeGeometry(roundedRect(w, d, r), { depth: h, bevelEnabled: false, curveSegments: 6 });
+        geo.rotateX(-Math.PI / 2);
+        geo.center();
+        const m = new THREE.Mesh(geo, mat(color));
+        m.position.y = cy;
+        m.castShadow = true; m.receiveShadow = true;
+        return m;
+      }
+
+      // ground plate (top surface at y = 0)
+      const ground = plate(13, 13, 0.5, 1.2, 0xbcb6a3, -0.25);
+      city.add(ground);
+
+      // tapered earth chunk underneath -> floating look
+      [
+        { w: 12.2, d: 12.2, h: 0.9, c: 0x8a6b4a, cy: -0.95 },
+        { w: 10.0, d: 10.0, h: 1.3, c: 0x7a5a3c, cy: -2.05 },
+        { w: 7.2,  d: 7.2,  h: 1.6, c: 0x6b4a30, cy: -3.50 },
+        { w: 4.2,  d: 4.2,  h: 1.8, c: 0x5a3d28, cy: -5.20 },
+      ].forEach((l) => city.add(plate(l.w, l.d, l.h, Math.min(1.0, l.w * 0.12), l.c, l.cy)));
+
+      // pointed tip
+      const tip = new THREE.Mesh(new THREE.ConeGeometry(2.0, 2.6, 7), mat(0x4d3422));
+      tip.position.y = -7.4; tip.rotation.x = Math.PI; tip.castShadow = true;
+      city.add(tip);
+
+      // ====== Window facade textures (cached) ======
+      const texCache = {};
+      function facadeTex(wall, win, cols, rows) {
+        const key = wall + "_" + win + "_" + cols + "_" + rows;
+        if (texCache[key]) return texCache[key];
+        const cv = document.createElement("canvas");
+        cv.width = 128; cv.height = 128;
+        const x = cv.getContext("2d");
+        x.fillStyle = wall; x.fillRect(0, 0, 128, 128);
+        const mx = 11, my = 10;
+        const gw = (128 - 2 * mx) / cols, gh = (128 - 2 * my) / rows;
+        const ww = gw * 0.62, wh = gh * 0.6;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            x.fillStyle = win;
+            x.fillRect(mx + c * gw + (gw - ww) / 2, my + r * gh + (gh - wh) / 2, ww, wh);
+          }
+        }
+        const t = new THREE.CanvasTexture(cv);
+        t.colorSpace = THREE.SRGBColorSpace;
+        t.anisotropy = 4;
+        texCache[key] = t;
+        return t;
+      }
+
+      // ====== Building (box with windowed facades) ======
+      function makeBuilding({ w, d, h, wall, win, roof }) {
+        const colsW = Math.max(2, Math.round(w * 2.1));
+        const colsD = Math.max(2, Math.round(d * 2.1));
+        const rows = Math.max(3, Math.round(h * 2.0));
+        const ws = hex(wall), wn = hex(win);
+        const mW = new THREE.MeshStandardMaterial({ map: facadeTex(ws, wn, colsW, rows), roughness: 0.8 });
+        const mD = new THREE.MeshStandardMaterial({ map: facadeTex(ws, wn, colsD, rows), roughness: 0.8 });
+        const top = mat(roof != null ? roof : wall);
+        const bot = mat(0x2e2a25);
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [mD, mD, top, bot, mW, mW]);
+        mesh.position.y = h / 2;
+        mesh.castShadow = mesh.receiveShadow = true;
+        return mesh;
+      }
+
+      // ====== Tower (setbacks + optional spire) ======
+      function makeTower({ h, wall, win, roof, spire }) {
+        const g = new THREE.Group();
+        const w = 1.15 + rnd() * 0.25, d = 1.15 + rnd() * 0.25;
+        const h1 = h * 0.66, h2 = h * 0.34;
+        const s1 = makeBuilding({ w, d, h: h1, wall, win, roof: null });
+        s1.position.y = h1 / 2; g.add(s1);
+        const s2 = makeBuilding({ w: w * 0.8, d: d * 0.8, h: h2, wall, win, roof });
+        s2.position.y = h1 + h2 / 2; g.add(s2);
+
+        // rooftop box / mechanical
+        if (rnd() < 0.6) {
+          const box = new THREE.Mesh(new THREE.BoxGeometry(w * 0.4, 0.3, d * 0.4), mat(0x55514a));
+          box.position.y = h + 0.15; box.castShadow = true; g.add(box);
+        }
+        if (spire) {
+          const sp = new THREE.Mesh(new THREE.ConeGeometry(0.16, 1.5, 8), mat(0xd8cdb8));
+          sp.position.y = h + 0.75; sp.castShadow = true; g.add(sp);
+          const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.8, 4), mat(0x555555));
+          ant.position.y = h + 1.6; g.add(ant);
+        }
+        return g;
+      }
+
+      // ====== Trees, cars ======
+      function makeTree(scale = 1) {
+        const g = new THREE.Group();
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.11, 0.45, 6), mat(0x6b4a2f));
+        trunk.position.y = 0.22; trunk.castShadow = true; g.add(trunk);
+        const greens = [0x4f7a3f, 0x5f8a4a, 0x6f9a55, 0x577f43];
+        const blob = (r, x, y, z) => {
+          const m = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 0), mat(pick(greens)));
+          m.position.set(x, y, z); m.castShadow = true; g.add(m);
+        };
+        blob(0.40, 0, 0.68, 0); blob(0.30, 0.24, 0.55, 0.10);
+        blob(0.27, -0.20, 0.60, -0.10); blob(0.25, 0.04, 0.92, 0.04);
+        g.scale.setScalar(scale);
+        return g;
+      }
+      function makeCar(color) {
+        const g = new THREE.Group();
+        const body = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.17, 0.26), mat(color, { roughness: 0.5 }));
+        body.position.y = 0.12; body.castShadow = true; g.add(body);
+        const cab = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.14, 0.24), mat(color, { roughness: 0.5 }));
+        cab.position.set(-0.03, 0.26, 0); g.add(cab);
+        return g;
+      }
+
+      const place = (obj, x, z, rot = 0) => { obj.position.x = x; obj.position.z = z; if (rot) obj.rotation.y += rot; city.add(obj); };
+
+      // ====== Roads (perimeter ring) + cars ======
+      const roadMat = mat(0x46433e, { roughness: 1 });
+      function road(w, d, x, z) {
+        const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.06, d), roadMat);
+        m.position.set(x, 0.03, z); m.receiveShadow = true; city.add(m);
+      }
+      road(11.4, 0.95, 0, 5.05); road(11.4, 0.95, 0, -5.05);
+      road(0.95, 11.4, 5.05, 0); road(0.95, 11.4, -5.05, 0);
+
+      const carColors = [0xb8593a, 0x3a4a5a, 0xd8d2c4, 0x6b7a52, 0x8a3a30, 0x44403a];
+      [[-3, 5.05, 0], [1.5, 5.05, 0], [-1, -5.05, 0], [3, -5.05, 0],
+       [5.05, -2.5, Math.PI / 2], [5.05, 2, Math.PI / 2], [-5.05, 3, Math.PI / 2], [-5.05, -1.5, Math.PI / 2]
+      ].forEach(([x, z, r]) => place(makeCar(pick(carColors)), x, z, r));
+
+      // ====== City blocks ======
+      const grid = [-4, -2.4, -0.8, 0.8, 2.4, 4];
+      const stoneCols = [0xd9cdb6, 0xcabfa3, 0xe2d8c2, 0xd0c3a8];
+      const glassCols = [0xb9c6c4, 0xaebfbf, 0xc6d0cb, 0xb0c0c2];
+      const brickCols = [0x9c5a3c, 0x8a4a32, 0xb06a44, 0x7c4a3a, 0xa85f3e];
+      const tanCols   = [0xc9a877, 0xdcc59a, 0xbf9a6a];
+      let landmark = false;
+
+      grid.forEach((z) => grid.forEach((x) => {
+        const front = (z + 4) / 8;                 // 0 = back, 1 = front
+        if (rnd() < 0.14) {                        // pocket park
+          place(makeTree(0.85 + rnd() * 0.5), x + (rnd() - 0.5) * 0.4, z + (rnd() - 0.5) * 0.4);
+          if (rnd() < 0.5) place(makeTree(0.7 + rnd() * 0.3), x + 0.5, z + 0.45);
+          return;
+        }
+        const h = (4.7 - front * 3.5) * (0.8 + rnd() * 0.5);
+
+        if (h > 3.0) {                             // skyscraper
+          const stone = rnd() < 0.5;
+          const wall = stone ? pick(stoneCols) : pick(glassCols);
+          const win = stone ? 0xe6d8bd : 0xc6d2d6;
+          const spire = !landmark && z <= -2.4 && Math.abs(x) < 1.3;
+          if (spire) landmark = true;
+          place(makeTower({ h, wall, win, roof: 0x4a4742, spire }), x, z, (rnd() - 0.5) * 0.18);
+        } else if (h > 1.9) {                       // brick mid-rise
+          const b = makeBuilding({ w: 1.2 + rnd() * 0.2, d: 1.2 + rnd() * 0.2, h, wall: pick(brickCols), win: 0xe7d6b8, roof: 0x4a4742 });
+          place(b, x, z, (rnd() - 0.5) * 0.28);
+        } else {                                    // low shop / brownstone
+          const b = makeBuilding({ w: 1.25, d: 1.25, h, wall: pick(brickCols.concat(tanCols)), win: 0xe7d6b8, roof: rnd() < 0.5 ? 0xb8593a : 0x4a4742 });
+          place(b, x, z, (rnd() - 0.5) * 0.4);
+        }
+      }));
+
+      // a few extra street trees scattered in the gaps
+      for (let i = 0; i < 10; i++) {
+        place(makeTree(0.7 + rnd() * 0.4), (rnd() - 0.5) * 9.4, (rnd() - 0.5) * 9.4);
+      }
+
+      // ====== Render loop ======
+      const clock = new THREE.Clock();
+      function resize() {
+        const w = canvas.clientWidth, h = canvas.clientHeight;
+        if (w === 0 || h === 0) return;
+        if (canvas.width !== Math.floor(w * renderer.getPixelRatio()) || canvas.height !== Math.floor(h * renderer.getPixelRatio())) {
+          renderer.setSize(w, h, false);
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+        }
+      }
+      function animate() {
+        resize();
+        const t = clock.getElapsedTime();
+        city.position.y = Math.sin(t * 0.9) * 0.22;   // gentle float
+        controls.update();
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+      animate();
+      window.addEventListener("resize", resize);
+    }
+  </script>
+</body>
+</html>
