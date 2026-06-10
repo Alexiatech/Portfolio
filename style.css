@@ -28,12 +28,16 @@ body {
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 100;
+  z-index: 200;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.1rem 5%;
-  background: rgba(247, 244, 239, 0.88);
+  background:var(--cream)(9, 79, 25, 0.43);
+
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(8.9px);
+-webkit-backdrop-filter: blur(8.9px);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(61, 107, 82, 0.12);
 }
@@ -101,15 +105,23 @@ nav {
   position: absolute;
   bottom: 2.5rem;
   left: 5%;
-  z-index: 1000;
-  background: rgba(247, 244, 239, 0.92);
+  z-index: 100;
+
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: var(--radius);
   padding: 1.75rem 2rem 1.5rem;
   max-width: 400px;
-  box-shadow: 0 4px 28px rgba(30, 42, 34, 0.14);
-  border: 1px solid rgba(61, 107, 82, 0.1);
+
+  /* From https://css.glass */
+background: rgba(9, 79, 25, 0.43);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(8.9px);
+-webkit-backdrop-filter: blur(8.9px);
+border: 1px solid rgba(9, 79, 25, 0.3);
+
+  
 }
 
 .hero-map-overlay .eyebrow {
@@ -123,6 +135,8 @@ nav {
   padding: 0.28rem 0.8rem;
   border-radius: 999px;
   margin-bottom: 0.75rem;
+
+  
 }
 
 .hero-map-overlay h1 {
@@ -332,30 +346,20 @@ nav {
   transform: translateY(-2px);
 }
 
-/* Photo column */
-.hero-photo-wrap {
-  position: relative;
-}
 
-.hero-photo-wrap::before {
-  content: '';
-  position: absolute;
-  inset: -18px -18px -18px 18px;
-  background: var(--green-lt);
-  border-radius: 60% 40% 55% 45% / 50% 45% 55% 50%;
-  z-index: 0;
-}
 
 .hero-photo {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  object-position: top center;
-  border-radius: 48% 52% 44% 56% / 40% 40% 60% 60%;
-  display: block;
-  filter: saturate(1.05) contrast(1.02);
+  justify-content: center;
+
+  z-index: 100;
+ 
+    width: 400px; /* adjust to control the size */
+    
+  
+    --g:/30.26% 30.26% radial-gradient(#000 calc(71% - 1px),#0000 71%) no-repeat;
+    mask: 92.216% 76.791% var(--g),55.375% 99.71% var(--g),14.486% 85.196% var(--g),0.34% 44.179% var(--g),23.589% 7.545% var(--g),66.726% 2.88% var(--g),97.268% 33.698% var(--g),radial-gradient(100% 100%,#000 31.417%,#0000 calc(31.417% + 1px));
+  
+ 
 }
 
 .hero-badge {
@@ -737,6 +741,7 @@ nav {
   /* Hero map overlay moves to bottom, smaller */
   .hero-map-overlay {
     left: 50%;
+    z-index: 0;
     transform: translateX(-50%);
     width: calc(100% - 3rem);
     max-width: 460px;
@@ -753,7 +758,7 @@ nav {
 
   .hero-text .bio  { margin-left: auto; margin-right: auto; }
   .hero-ctas       { justify-content: center; }
-  .hero-photo-wrap { order: -1; max-width: 300px; margin: 0 auto; }
+  .hero-photo-wrap { order: 0; max-width: 300px; margin: 0 auto; }
   .hero-badge      { left: 0; right: 0; margin: auto; width: fit-content; bottom: -1rem; }
 
   /* Grid: 2 cols, all items reset to span 1 */

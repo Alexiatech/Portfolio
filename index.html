@@ -48,9 +48,7 @@
 
     <!-- Overlay card: name + live badge + scroll hint -->
     <div class="hero-map-overlay">
-      <span class="eyebrow">Urban &amp; Environmental Planner</span>
       <h1>Hi, I'm Anika.</h1>
-      <p class="hero-map-sub">Shaping communities across the Pacific Northwest — Seattle to Bellingham.</p>
 
       <div class="hero-map-live">
         <span class="live-dot" aria-hidden="true"></span>
@@ -101,87 +99,101 @@
           src="images/Photos/anika-hero.jpg"
           alt="Portrait of Anika Nelson smiling in a garden"
           class="hero-photo"
-          width="420"
-          height="560"
+
           loading="eager"
         />
       </div>
 
-        <!-- ===== SKILLS =====================================================
-       Compact section — one header + a grid of hoverable skill chips.
-       Hover flips each chip from outlined to filled (green).
-       No JS needed; pure CSS transition.
-  ====================================================================== -->
-  <section id="skills" aria-label="Skills and tools">
-    <div class="skills-header fade-in">
-      <span class="skills-eyebrow">Toolkit</span>
-      <h2 class="skills-title">Skills</h2>
-      <p class="skills-sub">Tools and software I work with</p>
-    </div>
 
+    <!-- =================================================================
+         MODAL
+         ─────────────────────────────────────────────────────────────────
+         Single reusable dialog; main.js fills in the title, tag and media
+         for whichever card was clicked.
 
-    <!-- Chips zweven vrij door de sectie; bij hover verschijnt naam + link -->
-    <div class="skills-float-area" role="list" aria-label="List of skills">
-
-      <!-- Chip 1 — Microsoft Excel -->
-      <div class="skill-chip skill-chip--1" role="listitem" tabindex="0" aria-label="Microsoft Excel">
-        <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-excel/default.svg"
-             alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
-        <div class="skill-tooltip">
-          <strong>Microsoft Excel</strong>
-         
-        </div>
-      </div>
-
-      <!-- Chip 2 — Microsoft Word -->
-      <div class="skill-chip skill-chip--2" role="listitem" tabindex="0" aria-label="Microsoft Word">
-        <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-word/default.svg"
-             alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
-        <div class="skill-tooltip">
-          <strong>Microsoft Word</strong>
-          
-        </div>
-      </div>
-
-      <!-- Chip 3 — Microsoft PowerPoint -->
-      <div class="skill-chip skill-chip--3" role="listitem" tabindex="0" aria-label="Microsoft PowerPoint">
-        <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-powerpoint/default.svg"
-             alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
-        <div class="skill-tooltip">
-          <strong>Microsoft PowerPoint</strong>
-          
-        </div>
-      </div>
-
-      <!-- Chip 4 — SketchUp -->
-      
-        <img src="https://cdn.simpleicons.org/sketchup/005F9E"
-             alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
-        <div class="skill-tooltip">
-          <strong>SketchUp</strong>
-        </div>
-      </div>
-
-      <!-- Chip 5 — ArcGIS -->
-     
-        <img src="https://cdn.simpleicons.org/arcgis/007AC2"
-             alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
-        <div class="skill-tooltip">
-          <strong>ArcGIS</strong>
+         Accessibility:
+           • role="dialog" + aria-modal="true"
+           • aria-labelledby points to the modal heading
+           • Focus moves to the close button on open; returns to the
+             triggering card on close (handled in main.js)
+         ================================================================= -->
+         <div
+         class="modal-overlay"
+         id="proj-modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="modal-title-text"
+         hidden
+       >
+         <div class="modal-box">
+           <button class="modal-close" aria-label="Close project">&times;</button>
+           <p  class="modal-tag"   id="modal-tag-text"></p>
+           <h2 class="modal-title" id="modal-title-text"></h2>
+           <!-- JS inserts <img> or <embed> here -->
+           <div class="modal-media" id="modal-media"></div>
+         </div>
+       </div>
    
-        </div>
-    
-
-      <!-- Chip 6 — Adobe InDesign -->
+     <!-- ===== SKILLS ===== -->
      
-           <alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
-        <div class="skill-tooltip"
-          <strong>Adobe InDesign</strong>
-        </div>
-    
-
-    </div><!-- /.skills-float-area -->
-  </section><!-- /#skills -->
+       <div class="skills-header fade-in">
+         <span class="skills-eyebrow">Toolkit</span>
+         <h2 class="skills-title">My Skills</h2>
+         <p class="skills-sub">Tools and software I work with</p>
+       </div>
+   
+       <div class="skills-grid" role="list" aria-label="List of skills">
+   
+         <div class="skill-item" role="listitem">
+           <div class="skill-icon">
+             <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-excel/default.svg"
+                  alt="Microsoft Excel" width="48" height="48" loading="lazy" />
+           </div>
+           <span class="skill-name">Microsoft Excel</span>
+         </div>
+   
+         <div class="skill-item" role="listitem">
+           <div class="skill-icon">
+             <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-word/default.svg"
+                  alt="Microsoft Word" width="48" height="48" loading="lazy" />
+           </div>
+           <span class="skill-name">Microsoft Word</span>
+         </div>
+   
+         <div class="skill-item" role="listitem">
+           <div class="skill-icon">
+             <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-powerpoint/default.svg"
+                  alt="Microsoft PowerPoint" width="48" height="48" loading="lazy" />
+           </div>
+           <span class="skill-name">PowerPoint</span>
+         </div>
+   
+         <div class="skill-item" role="listitem">
+           <div class="skill-icon">
+             <img src="https://cdn.simpleicons.org/sketchup/005F9E"
+                  alt="SketchUp" width="48" height="48" loading="lazy" />
+           </div>
+           <span class="skill-name">SketchUp</span>
+         </div>
+   
+         <div class="skill-item" role="listitem">
+           <div class="skill-icon">
+             <img src="https://cdn.simpleicons.org/arcgis/007AC2"
+                  alt="ArcGIS" width="48" height="48" loading="lazy" />
+           </div>
+           <span class="skill-name">ArcGIS</span>
+         </div>
+   
+         <div class="skill-item" role="listitem">
+           <div class="skill-icon">
+             <img src="images/Photos/adobe_indesign_software_computer_app_design_software_icon_191061.svg"
+                  alt="Adobe InDesign" width="48" height="48" loading="lazy" />
+           </div>
+           <span class="skill-name">Adobe InDesign</span>
+         </div>
+   
+       </div>
+     </section><!-- /#skills -->
 
     </div>
   </section>
@@ -292,97 +304,6 @@
 
     </div><!-- /.projects-grid -->
 
-    <!-- =================================================================
-         MODAL
-         ─────────────────────────────────────────────────────────────────
-         Single reusable dialog; main.js fills in the title, tag and media
-         for whichever card was clicked.
-
-         Accessibility:
-           • role="dialog" + aria-modal="true"
-           • aria-labelledby points to the modal heading
-           • Focus moves to the close button on open; returns to the
-             triggering card on close (handled in main.js)
-         ================================================================= -->
-    <div
-      class="modal-overlay"
-      id="proj-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title-text"
-      hidden
-    >
-      <div class="modal-box">
-        <button class="modal-close" aria-label="Close project">&times;</button>
-        <p  class="modal-tag"   id="modal-tag-text"></p>
-        <h2 class="modal-title" id="modal-title-text"></h2>
-        <!-- JS inserts <img> or <embed> here -->
-        <div class="modal-media" id="modal-media"></div>
-      </div>
-    </div>
-
-  </section><!-- /#projects -->
-
-  <!-- ===== SKILLS ===== -->
-  <section id="skills" aria-label="Skills and tools">
-    <div class="skills-header fade-in">
-      <span class="skills-eyebrow">Toolkit</span>
-      <h2 class="skills-title">My Skills</h2>
-      <p class="skills-sub">Tools and software I work with</p>
-    </div>
-
-    <div class="skills-grid" role="list" aria-label="List of skills">
-
-      <div class="skill-item" role="listitem">
-        <div class="skill-icon">
-          <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-excel/default.svg"
-               alt="Microsoft Excel" width="48" height="48" loading="lazy" />
-        </div>
-        <span class="skill-name">Microsoft Excel</span>
-      </div>
-
-      <div class="skill-item" role="listitem">
-        <div class="skill-icon">
-          <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-word/default.svg"
-               alt="Microsoft Word" width="48" height="48" loading="lazy" />
-        </div>
-        <span class="skill-name">Microsoft Word</span>
-      </div>
-
-      <div class="skill-item" role="listitem">
-        <div class="skill-icon">
-          <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-powerpoint/default.svg"
-               alt="Microsoft PowerPoint" width="48" height="48" loading="lazy" />
-        </div>
-        <span class="skill-name">PowerPoint</span>
-      </div>
-
-      <div class="skill-item" role="listitem">
-        <div class="skill-icon">
-          <img src="https://cdn.simpleicons.org/sketchup/005F9E"
-               alt="SketchUp" width="48" height="48" loading="lazy" />
-        </div>
-        <span class="skill-name">SketchUp</span>
-      </div>
-
-      <div class="skill-item" role="listitem">
-        <div class="skill-icon">
-          <img src="https://cdn.simpleicons.org/arcgis/007AC2"
-               alt="ArcGIS" width="48" height="48" loading="lazy" />
-        </div>
-        <span class="skill-name">ArcGIS</span>
-      </div>
-
-      <div class="skill-item" role="listitem">
-        <div class="skill-icon">
-          <img src="images/Photos/adobe_indesign_software_computer_app_design_software_icon_191061.svg"
-               alt="Adobe InDesign" width="48" height="48" loading="lazy" />
-        </div>
-        <span class="skill-name">Adobe InDesign</span>
-      </div>
-
-    </div>
-  </section><!-- /#skills -->
 
   <script src="js/main.js" defer></script>
 </body>
