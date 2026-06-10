@@ -3,703 +3,387 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Anika Wiersma — Urban Planner. Designing greener, more livable cities through thoughtful, people-first planning." />
-  <title>Anika Wiersma · Urban Planner</title>
+  <title>Anika Nelson | Urban Planner</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <!-- Google Fonts: DM Serif Display (headings) + Inter (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- Decide whether to show the intro before paint (avoids flicker) -->
-  <script>
-    (function () {
-      var html = document.documentElement;
-      try {
-        var seen = localStorage.getItem("anikaIntroSeen");
-        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        html.classList.add(seen || reduce ? "intro-skip" : "intro-on");
-      } catch (e) {
-        html.classList.add("intro-on");
-      }
-      // Failsafe: no matter what happens, never leave the page locked
-      // behind the intro overlay. Always release after 6 seconds.
-      window.setTimeout(function () {
-        html.classList.remove("intro-on");
-        var n = document.getElementById("intro");
-        if (n && n.parentNode) n.parentNode.removeChild(n);
-      }, 6000);
-    })();
-  </script>
+  <!-- MapLibre GL (3D map) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.5.0/dist/maplibre-gl.css" />
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.5.0/dist/maplibre-gl.js"></script>
+
 </head>
+
 <body>
 
-  <!-- ===== Intro animation (name → little city → reveal) ===== -->
-  <div class="intro" id="intro" role="presentation">
-    <div class="intro-inner">
-      <div class="intro-name" id="introName" aria-label="Anika">
-        <span class="ltr-mask"><span class="ltr" style="--i:0">A</span></span>
-        <span class="ltr-mask"><span class="ltr" style="--i:1">n</span></span>
-        <span class="ltr-mask"><span class="ltr" style="--i:2">i</span></span>
-        <span class="ltr-mask"><span class="ltr" style="--i:3">k</span></span>
-        <span class="ltr-mask"><span class="ltr" style="--i:4">a</span></span>
+  <!-- ===== NAV ===== -->
+  <nav aria-label="Main navigation">
+    <a href="#hero" class="nav-logo" aria-label="Anika Nelson - Home">
+      <img src="images/AN_logo.png" alt="AN" class="nav-logo-icon" width="36" height="36" />
+      <span>Anika Nelson</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#projects">Work</a></li>
+      <li><a href="mailto:aninel14@gmail.com">Contact</a></li>
+      <a href="https://www.linkedin.com/in/anika-nelson-403998376/" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.447 20.452H16.89v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.346V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.37-1.85 3.604 0 4.268 2.372 4.268 5.455v6.286zM5.337 7.433a2.063 2.063 0 1 1 0-4.126 2.063 2.063 0 0 1 0 4.126zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
+        </svg>
+      </a>
+    </ul>
+  </nav>
+
+  <!-- ===== HERO MAP ===== -->
+  <section id="hero" aria-label="Interactive map of Anika's planning region">
+
+    <!-- Leaflet map fills the full viewport -->
+    <div id="hero-map"></div>
+
+    <!-- Overlay card: name + live badge + scroll hint -->
+    <div class="hero-map-overlay">
+      <span class="eyebrow">Urban &amp; Environmental Planner</span>
+      <h1>Hi, I'm Anika.</h1>
+      <p class="hero-map-sub">Shaping communities across the Pacific Northwest — Seattle to Bellingham.</p>
+
+      <div class="hero-map-live">
+        <span class="live-dot" aria-hidden="true"></span>
+        Live road data &middot; <span id="map-live-badge">loading…</span>
       </div>
 
-      <svg class="intro-skyline" viewBox="0 0 600 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-        <!-- ground -->
-        <line class="ground" x1="40" y1="210" x2="560" y2="210" />
-
-        <!-- buildings (rise from the ground) -->
-        <g class="bld" style="--d:0.00s">
-          <rect x="150" y="138" width="44" height="72" rx="3" fill="#5a6b4a" />
-          <rect class="win" x="158" y="150" width="9" height="11" /><rect class="win" x="176" y="150" width="9" height="11" />
-          <rect class="win" x="158" y="170" width="9" height="11" /><rect class="win" x="176" y="170" width="9" height="11" />
-          <rect class="win" x="158" y="190" width="9" height="11" /><rect class="win" x="176" y="190" width="9" height="11" />
-        </g>
-
-        <g class="bld" style="--d:0.10s">
-          <rect x="202" y="96" width="50" height="114" rx="3" fill="#b8593a" />
-          <polygon class="roof" points="202,96 227,78 252,96" fill="#9a4528" />
-          <rect class="win" x="211" y="108" width="10" height="12" /><rect class="win" x="232" y="108" width="10" height="12" />
-          <rect class="win" x="211" y="130" width="10" height="12" /><rect class="win" x="232" y="130" width="10" height="12" />
-          <rect class="win" x="211" y="152" width="10" height="12" /><rect class="win" x="232" y="152" width="10" height="12" />
-          <rect class="win" x="211" y="174" width="10" height="12" /><rect class="win" x="232" y="174" width="10" height="12" />
-        </g>
-
-        <g class="bld" style="--d:0.22s">
-          <rect x="262" y="58" width="42" height="152" rx="3" fill="#3a352f" />
-          <rect class="win" x="270" y="72" width="9" height="11" /><rect class="win" x="287" y="72" width="9" height="11" />
-          <rect class="win" x="270" y="92" width="9" height="11" /><rect class="win" x="287" y="92" width="9" height="11" />
-          <rect class="win" x="270" y="112" width="9" height="11" /><rect class="win" x="287" y="112" width="9" height="11" />
-          <rect class="win" x="270" y="132" width="9" height="11" /><rect class="win" x="287" y="132" width="9" height="11" />
-          <rect class="win" x="270" y="152" width="9" height="11" /><rect class="win" x="287" y="152" width="9" height="11" />
-          <rect class="win" x="270" y="172" width="9" height="11" /><rect class="win" x="287" y="172" width="9" height="11" />
-        </g>
-
-        <g class="bld" style="--d:0.34s">
-          <rect x="314" y="118" width="48" height="92" rx="3" fill="#7d8c6a" />
-          <rect class="win" x="323" y="132" width="10" height="12" /><rect class="win" x="343" y="132" width="10" height="12" />
-          <rect class="win" x="323" y="154" width="10" height="12" /><rect class="win" x="343" y="154" width="10" height="12" />
-          <rect class="win" x="323" y="176" width="10" height="12" /><rect class="win" x="343" y="176" width="10" height="12" />
-        </g>
-
-        <g class="bld" style="--d:0.46s">
-          <rect x="372" y="78" width="46" height="132" rx="3" fill="#9a4528" />
-          <rect class="win" x="381" y="92" width="10" height="12" /><rect class="win" x="401" y="92" width="10" height="12" />
-          <rect class="win" x="381" y="114" width="10" height="12" /><rect class="win" x="401" y="114" width="10" height="12" />
-          <rect class="win" x="381" y="136" width="10" height="12" /><rect class="win" x="401" y="136" width="10" height="12" />
-          <rect class="win" x="381" y="158" width="10" height="12" /><rect class="win" x="401" y="158" width="10" height="12" />
-        </g>
-
-        <g class="bld" style="--d:0.58s">
-          <rect x="428" y="150" width="40" height="60" rx="3" fill="#b8593a" />
-          <rect class="win" x="436" y="162" width="9" height="11" /><rect class="win" x="452" y="162" width="9" height="11" />
-          <rect class="win" x="436" y="182" width="9" height="11" /><rect class="win" x="452" y="182" width="9" height="11" />
-        </g>
-
-        <!-- trees (pop in) -->
-        <g class="tree" style="--d:0.00s">
-          <rect x="126" y="186" width="7" height="24" rx="2" fill="#3a352f" />
-          <circle cx="129.5" cy="178" r="17" fill="#5a6b4a" />
-          <circle cx="120" cy="186" r="11" fill="#7d8c6a" />
-          <circle cx="139" cy="186" r="11" fill="#7d8c6a" />
-        </g>
-        <g class="tree" style="--d:0.16s">
-          <rect x="304" y="184" width="8" height="26" rx="2" fill="#3a352f" />
-          <circle cx="308" cy="174" r="19" fill="#5a6b4a" />
-          <circle cx="297" cy="184" r="12" fill="#7d8c6a" />
-          <circle cx="319" cy="184" r="12" fill="#7d8c6a" />
-        </g>
-        <g class="tree" style="--d:0.30s">
-          <rect x="478" y="188" width="7" height="22" rx="2" fill="#3a352f" />
-          <circle cx="481.5" cy="180" r="16" fill="#5a6b4a" />
-          <circle cx="472" cy="187" r="10" fill="#7d8c6a" />
-          <circle cx="491" cy="187" r="10" fill="#7d8c6a" />
-        </g>
-      </svg>
+      <a href="#hero-info" class="scroll-hint" aria-label="Scroll down to read more">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+        </svg>
+        Scroll down
+      </a>
     </div>
 
-    <button class="intro-skip" id="introSkip" type="button">Skip &rarr;</button>
-  </div>
+  </section>
 
+  <!-- ===== HERO INFO (bio + photo) ===== -->
+  <section id="hero-info" aria-label="Introduction">
+    <div class="hero-inner">
 
-  <!-- ===== Navigation ===== -->
-  <header class="site-header" id="top">
-    <nav class="nav container">
-      <a href="#top" class="logo">Anika<span>.</span></a>
+      <!-- Text -->
+      <div class="hero-text">
+        <span class="eyebrow">Urban &amp; Environmental Planner</span>
 
-      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+        <h1>Hi, I'm Anika.</h1>
 
-      <ul class="nav-links" id="navLinks">
-        <li><a href="#about">About</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#play">Play</a></li>
-        <li><a href="#experience">Experience</a></li>
-        <li><a href="#contact" class="nav-cta">Contact</a></li>
-      </ul>
-    </nav>
-  </header>
+        <p class="subtitle">
+          B.A. Urban Planning &amp; Sustainable Development &middot; WWU '26
+        </p>
 
-  <main>
+        <p class="bio">
+          I'm passionate about transportation planning and creating accessible, equitable communities
+          through universal design. Currently interning at Skagit Council of Governments, working on
+          public outreach and the Skagit County Resource Guide in partnership with Community Action
+          of Skagit County.
+        </p>
 
-    <!-- ===== Hero ===== -->
-    <section class="hero" id="hero">
-      <div class="container hero-inner">
-        <div class="hero-copy">
-          <p class="eyebrow reveal">Urban Planner · Sustainable Cities</p>
-          <h1 class="reveal">Designing cities that<br />work for <em id="rotateWord" class="rotate-word">people</em>.</h1>
-          <p class="hero-lede reveal">
-            I'm Anika — an urban planner focused on greener, more walkable, more
-            human neighborhoods. I help communities turn ideas into places worth
-            living in.
-          </p>
-          <div class="hero-actions reveal">
-            <a href="#projects" class="btn btn-primary">View my work</a>
-            <a href="#contact" class="btn btn-ghost">Get in touch</a>
-          </div>
-        </div>
-
-        <div class="hero-stage reveal">
-          <canvas id="village" aria-label="Interactive 3D village you can drag to rotate"></canvas>
-          <p class="stage-hint">↻ Drag to spin · scroll to zoom</p>
+        <div class="hero-ctas">
+          <a href="#projects" class="btn btn-primary">View My Work</a>
+          <a href="mailto:aninel14@gmail.com" class="btn btn-outline">Get in Touch</a>
         </div>
       </div>
-      <div class="hero-scroll" aria-hidden="true">
-        <span>Scroll</span>
-        <div class="scroll-line"></div>
+
+      <!-- Photo -->
+      <div class="hero-photo-wrap">
+        <img
+          src="images/Photos/anika-hero.jpg"
+          alt="Portrait of Anika Nelson smiling in a garden"
+          class="hero-photo"
+          width="420"
+          height="560"
+          loading="eager"
+        />
       </div>
-    </section>
 
-    <!-- ===== About ===== -->
-    <section class="about section" id="about">
-      <div class="container about-grid">
-        <div class="about-media reveal">
-          <div class="about-photo" role="img" aria-label="Portrait of Anika">
-            <span>Your photo here</span>
-          </div>
-        </div>
-        <div class="about-text reveal">
-          <p class="eyebrow">About</p>
-          <h2>Planning with people, place, and the planet in mind.</h2>
-          <p>
-            With a background in urban design and community planning, I work at
-            the intersection of policy, sustainability, and everyday life. My
-            approach is collaborative: I listen first, map the realities on the
-            ground, and build plans that neighborhoods actually want.
-          </p>
-          <p>
-            From transit corridors to pocket parks, I care about the small
-            details that make a city feel alive — shade on a sidewalk, a safe
-            crossing, a place to sit.
-          </p>
-          <ul class="about-skills">
-            <li>Community Engagement</li>
-            <li>Land-Use Planning</li>
-            <li>GIS &amp; Mapping</li>
-            <li>Sustainable Mobility</li>
-            <li>Zoning &amp; Policy</li>
-            <li>Placemaking</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Projects ===== -->
-    <section class="projects section" id="projects">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="eyebrow">Selected Work</p>
-          <h2>Projects</h2>
-          <p class="section-sub">
-            A few projects that capture how I think about cities. Replace these
-            with Anika's real work, photos, and outcomes.
-          </p>
-        </div>
-
-        <div class="project-grid">
-          <article class="project-card reveal">
-            <div class="project-thumb thumb-1" aria-hidden="true"></div>
-            <div class="project-body">
-              <span class="project-tag">Public Space</span>
-              <h3>Riverside Greenway</h3>
-              <p>
-                Transformed an underused industrial waterfront into a 4 km
-                public greenway with native planting and protected bike paths.
-              </p>
-              <a href="#" class="project-link">Read case study →</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal">
-            <div class="project-thumb thumb-2" aria-hidden="true"></div>
-            <div class="project-body">
-              <span class="project-tag">Mobility</span>
-              <h3>15-Minute Neighborhood</h3>
-              <p>
-                A planning framework helping residents reach daily needs within
-                a short walk or ride — reducing car dependence by 30%.
-              </p>
-              <a href="#" class="project-link">Read case study →</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal">
-            <div class="project-thumb thumb-3" aria-hidden="true"></div>
-            <div class="project-body">
-              <span class="project-tag">Housing</span>
-              <h3>Maple District Rezoning</h3>
-              <p>
-                Led community-driven rezoning enabling mixed-income housing while
-                preserving the neighborhood's character and tree canopy.
-              </p>
-              <a href="#" class="project-link">Read case study →</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal">
-            <div class="project-thumb thumb-4" aria-hidden="true"></div>
-            <div class="project-body">
-              <span class="project-tag">Climate</span>
-              <h3>Cool Streets Initiative</h3>
-              <p>
-                A heat-resilience plan adding shade, green corridors, and
-                permeable surfaces across the city's hottest districts.
-              </p>
-              <a href="#" class="project-link">Read case study →</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Mini-game: Plan a city ===== -->
-    <section class="game section" id="play">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="eyebrow">Try it yourself</p>
-          <h2>Plan your own city</h2>
-          <p class="section-sub">
-            A great city balances homes and green space. Pick a tile, draw on the
-            grid, and watch your urban-planning score react in real time. Can you
-            reach 80+?
-          </p>
-        </div>
-
-        <div class="game-wrap reveal">
-          <div class="board-wrap">
-            <div class="toolbar" id="toolbar">
-              <button class="tool active" data-tool="park" type="button">Park</button>
-              <button class="tool" data-tool="house" type="button">House</button>
-              <button class="tool" data-tool="building" type="button">Building</button>
-              <button class="tool" data-tool="water" type="button">Water</button>
-              <button class="tool" data-tool="road" type="button">Road</button>
-              <button class="tool" data-tool="erase" type="button">Erase</button>
-            </div>
-
-            <div class="city-grid" id="cityGrid" role="grid" aria-label="City building grid"></div>
-
-            <div class="game-actions">
-              <button class="btn btn-soft" id="demoCity" type="button">Show example</button>
-              <button class="btn btn-soft" id="resetCity" type="button">Clear</button>
-            </div>
-          </div>
-
-          <aside class="panel">
-            <div class="overall">
-              <div class="overall-top">
-                <span>Urban-planning score</span>
-                <span id="overallVal">0</span>
-              </div>
-              <div class="overall-track">
-                <div class="overall-fill" id="overallFill"></div>
-                <div class="goal" title="Goal: 80"></div>
-              </div>
-              <p class="rating"><span id="rating">Start building…</span><small id="tip">Pick a tile, then click or drag on the grid.</small></p>
-            </div>
-
-            <div class="meters">
-              <div class="meter">
-                <div class="meter-top"><span>Green &amp; parks</span><span class="meter-val" id="val-greenery">0</span></div>
-                <div class="meter-track"><div class="meter-fill fill-green" id="fill-greenery"></div></div>
-              </div>
-              <div class="meter">
-                <div class="meter-top"><span>Homes &amp; people</span><span class="meter-val" id="val-housing">0</span></div>
-                <div class="meter-track"><div class="meter-fill fill-clay" id="fill-housing"></div></div>
-              </div>
-              <div class="meter">
-                <div class="meter-top"><span>Green near homes</span><span class="meter-val" id="val-livability">0</span></div>
-                <div class="meter-track"><div class="meter-fill fill-green" id="fill-livability"></div></div>
-              </div>
-              <div class="meter">
-                <div class="meter-top"><span>Water &amp; nature</span><span class="meter-val" id="val-nature">0</span></div>
-                <div class="meter-track"><div class="meter-fill fill-water" id="fill-nature"></div></div>
-              </div>
-            </div>
-          </aside>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Experience / CV ===== -->
-    <section class="experience section" id="experience">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="eyebrow">Background</p>
-          <h2>Experience &amp; Education</h2>
-        </div>
-
-        <div class="timeline">
-          <div class="timeline-item reveal">
-            <div class="timeline-date">2022 — Present</div>
-            <div class="timeline-content">
-              <h3>Senior Urban Planner</h3>
-              <p class="timeline-org">City Planning Department</p>
-              <p>
-                Lead planner on neighborhood revitalization and sustainable
-                mobility projects, coordinating across agencies and communities.
-              </p>
-            </div>
-          </div>
-
-          <div class="timeline-item reveal">
-            <div class="timeline-date">2019 — 2022</div>
-            <div class="timeline-content">
-              <h3>Urban Planner</h3>
-              <p class="timeline-org">Studio for Civic Design</p>
-              <p>
-                Delivered master plans, zoning analyses, and public engagement
-                strategies for mid-sized municipalities.
-              </p>
-            </div>
-          </div>
-
-          <div class="timeline-item reveal">
-            <div class="timeline-date">2017 — 2019</div>
-            <div class="timeline-content">
-              <h3>Master of Urban Planning</h3>
-              <p class="timeline-org">University of Design &amp; Society</p>
-              <p>
-                Specialization in sustainable development and transportation
-                planning. Thesis on equitable access to green space.
-              </p>
-            </div>
-          </div>
-
-          <div class="timeline-item reveal">
-            <div class="timeline-date">2013 — 2017</div>
-            <div class="timeline-content">
-              <h3>BSc Geography &amp; Spatial Planning</h3>
-              <p class="timeline-org">University of Design &amp; Society</p>
-              <p>
-                Foundations in GIS, demographics, and the systems that shape how
-                cities grow.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="cv-cta reveal">
-          <a href="#" class="btn btn-primary">Download full CV (PDF)</a>
-        </div>
-      </div>
-    </section>
-
-
-
-  </main>
-
-  <!-- ===== Footer ===== -->
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <p>© <span id="year"></span> Anika Wiersma · Urban Planner</p>
-      <a href="#top" class="back-to-top">Back to top ↑</a>
+        <!-- ===== SKILLS =====================================================
+       Compact section — one header + a grid of hoverable skill chips.
+       Hover flips each chip from outlined to filled (green).
+       No JS needed; pure CSS transition.
+  ====================================================================== -->
+  <section id="skills" aria-label="Skills and tools">
+    <div class="skills-header fade-in">
+      <span class="skills-eyebrow">Toolkit</span>
+      <h2 class="skills-title">Skills</h2>
+      <p class="skills-sub">Tools and software I work with</p>
     </div>
-  </footer>
 
-  <script src="intro.js"></script>
-  <script src="script.js"></script>
-  <script src="game.js"></script>
 
-  <!-- ===== 3D Village (Three.js) ===== -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-    }
-  }
-  </script>
-  <script type="module">
-    import * as THREE from "three";
-    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+    <!-- Chips zweven vrij door de sectie; bij hover verschijnt naam + link -->
+    <div class="skills-float-area" role="list" aria-label="List of skills">
 
-    const canvas = document.getElementById("village");
-    if (canvas && window.WebGLRenderingContext) {
-      try { initCity(canvas); }
-      catch (err) { console.warn("3D city could not start:", err); }
-    }
+      <!-- Chip 1 — Microsoft Excel -->
+      <div class="skill-chip skill-chip--1" role="listitem" tabindex="0" aria-label="Microsoft Excel">
+        <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-excel/default.svg"
+             alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
+        <div class="skill-tooltip">
+          <strong>Microsoft Excel</strong>
+         
+        </div>
+      </div>
 
-    function initCity(canvas) {
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.05;
+      <!-- Chip 2 — Microsoft Word -->
+      <div class="skill-chip skill-chip--2" role="listitem" tabindex="0" aria-label="Microsoft Word">
+        <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-word/default.svg"
+             alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
+        <div class="skill-tooltip">
+          <strong>Microsoft Word</strong>
+          
+        </div>
+      </div>
 
-      const scene = new THREE.Scene();
+      <!-- Chip 3 — Microsoft PowerPoint -->
+      <div class="skill-chip skill-chip--3" role="listitem" tabindex="0" aria-label="Microsoft PowerPoint">
+        <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-powerpoint/default.svg"
+             alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
+        <div class="skill-tooltip">
+          <strong>Microsoft PowerPoint</strong>
+          
+        </div>
+      </div>
 
-      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 200);
-      camera.position.set(17, 13, 17);
+      <!-- Chip 4 — SketchUp -->
+      
+        <img src="https://cdn.simpleicons.org/sketchup/005F9E"
+             alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
+        <div class="skill-tooltip">
+          <strong>SketchUp</strong>
+        </div>
+      </div>
 
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.08;
-      controls.enablePan = false;
-      controls.minDistance = 12;
-      controls.maxDistance = 38;
-      controls.minPolarAngle = Math.PI / 7;
-      controls.maxPolarAngle = Math.PI * 0.54;   // dip slightly to reveal the floating underside
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.6;
-      controls.target.set(0, 2.2, 0);
+      <!-- Chip 5 — ArcGIS -->
+     
+        <img src="https://cdn.simpleicons.org/arcgis/007AC2"
+             alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
+        <div class="skill-tooltip">
+          <strong>ArcGIS</strong>
+   
+        </div>
+    
 
-      let idle;
-      controls.addEventListener("start", () => { controls.autoRotate = false; clearTimeout(idle); });
-      controls.addEventListener("end", () => {
-        clearTimeout(idle);
-        idle = setTimeout(() => { controls.autoRotate = true; }, 2500);
-      });
+      <!-- Chip 6 — Adobe InDesign -->
+     
+           <alt="" aria-hidden="true" width="38" height="38" loading="lazy" />
+        <div class="skill-tooltip"
+          <strong>Adobe InDesign</strong>
+        </div>
+    
 
-      // ---- Lighting ----
-      scene.add(new THREE.HemisphereLight(0xfff5e6, 0x6b5b45, 0.7));
-      scene.add(new THREE.AmbientLight(0xffffff, 0.32));
-      const sun = new THREE.DirectionalLight(0xfff1dd, 1.2);
-      sun.position.set(13, 20, 9);
-      sun.castShadow = true;
-      sun.shadow.mapSize.set(2048, 2048);
-      const s = 13;
-      Object.assign(sun.shadow.camera, { left: -s, right: s, top: s, bottom: -s, near: 1, far: 70 });
-      sun.shadow.bias = -0.0004;
-      scene.add(sun);
+    </div><!-- /.skills-float-area -->
+  </section><!-- /#skills -->
 
-      // ---- Helpers ----
-      const mat = (color, extra = {}) =>
-        new THREE.MeshStandardMaterial({ color, flatShading: true, roughness: 0.92, metalness: 0, ...extra });
-      const hex = (n) => "#" + n.toString(16).padStart(6, "0");
+    </div>
+  </section>
 
-      // deterministic pseudo-random so the layout is stable each load
-      let seed = 1337;
-      const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-      const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
+  <!-- ===================================================================
+       PROJECTS — CARD GRID
+       ===================================================================
+       Magazine-style grid: 4 columns on desktop, 2 on tablet, 1 on mobile.
+       Layout:
+         [  GIS & Mapmaking (2 col)  ] [ Internship ] [ Site Plan ]
+         [         Transportation Studio  (full width, 4 col)      ]
 
-      const city = new THREE.Group();
-      scene.add(city);
+       Each card stores its media info in data attributes:
+         data-title  – project name shown in the modal header
+         data-src    – path to the image or PDF
+         data-type   – "image" | "pdf"
+         data-tag    – category label
 
-      // ====== Floating island base ======
-      function roundedRect(w, d, r) {
-        const sh = new THREE.Shape();
-        const x = -w / 2, y = -d / 2;
-        sh.moveTo(x + r, y);
-        sh.lineTo(x + w - r, y); sh.quadraticCurveTo(x + w, y, x + w, y + r);
-        sh.lineTo(x + w, y + d - r); sh.quadraticCurveTo(x + w, y + d, x + w - r, y + d);
-        sh.lineTo(x + r, y + d); sh.quadraticCurveTo(x, y + d, x, y + d - r);
-        sh.lineTo(x, y + r); sh.quadraticCurveTo(x, y, x + r, y);
-        return sh;
-      }
-      function plate(w, d, h, r, color, cy) {
-        const geo = new THREE.ExtrudeGeometry(roundedRect(w, d, r), { depth: h, bevelEnabled: false, curveSegments: 6 });
-        geo.rotateX(-Math.PI / 2);
-        geo.center();
-        const m = new THREE.Mesh(geo, mat(color));
-        m.position.y = cy;
-        m.castShadow = true; m.receiveShadow = true;
-        return m;
-      }
+       Clicking any card opens the modal (populated via main.js).
+       =================================================================== -->
+  <section id="projects" aria-label="Selected work">
+    
 
-      // ground plate (top surface at y = 0)
-      const ground = plate(13, 13, 0.5, 1.2, 0xbcb6a3, -0.25);
-      city.add(ground);
+    <!-- Section header -->
+    <div class="section-header fade-in">
+      <span class="eyebrow">Selected Work</span>
+      <h2 class="section-title">Projects</h2>
+      <p class="section-hint">Click a card to explore</p>
+    </div>
 
-      // tapered earth chunk underneath -> floating look
-      [
-        { w: 12.2, d: 12.2, h: 0.9, c: 0x8a6b4a, cy: -0.95 },
-        { w: 10.0, d: 10.0, h: 1.3, c: 0x7a5a3c, cy: -2.05 },
-        { w: 7.2,  d: 7.2,  h: 1.6, c: 0x6b4a30, cy: -3.50 },
-        { w: 4.2,  d: 4.2,  h: 1.8, c: 0x5a3d28, cy: -5.20 },
-      ].forEach((l) => city.add(plate(l.w, l.d, l.h, Math.min(1.0, l.w * 0.12), l.c, l.cy)));
 
-      // pointed tip
-      const tip = new THREE.Mesh(new THREE.ConeGeometry(2.0, 2.6, 7), mat(0x4d3422));
-      tip.position.y = -7.4; tip.rotation.x = Math.PI; tip.castShadow = true;
-      city.add(tip);
+    <!-- Card grid -->
+    <div class="projects-grid">
 
-      // ====== Window facade textures (cached) ======
-      const texCache = {};
-      function facadeTex(wall, win, cols, rows) {
-        const key = wall + "_" + win + "_" + cols + "_" + rows;
-        if (texCache[key]) return texCache[key];
-        const cv = document.createElement("canvas");
-        cv.width = 128; cv.height = 128;
-        const x = cv.getContext("2d");
-        x.fillStyle = wall; x.fillRect(0, 0, 128, 128);
-        const mx = 11, my = 10;
-        const gw = (128 - 2 * mx) / cols, gh = (128 - 2 * my) / rows;
-        const ww = gw * 0.62, wh = gh * 0.6;
-        for (let r = 0; r < rows; r++) {
-          for (let c = 0; c < cols; c++) {
-            x.fillStyle = win;
-            x.fillRect(mx + c * gw + (gw - ww) / 2, my + r * gh + (gh - wh) / 2, ww, wh);
-          }
-        }
-        const t = new THREE.CanvasTexture(cv);
-        t.colorSpace = THREE.SRGBColorSpace;
-        t.anisotropy = 4;
-        texCache[key] = t;
-        return t;
-      }
+      <!-- ── Card 1 · GIS & Mapmaking (2 cols, featured) ── -->
+      <div class="proj-item proj-item--span2">
+        <a class="proj-card"
+           href="#"
+           data-title="GIS &amp; Mapmaking"
+           data-src="images/GIS%20%26%20Mapmaking/MHI%202.jpg"
+           data-type="image"
+           data-tag="Spatial Analysis"
+           aria-label="Open GIS and Mapmaking project">
+          <div class="proj-thumb" style="background-image: url('images/GIS%20%26%20Mapmaking/MHI%202.jpg');"></div>
+          <article>
+            <h3>GIS &amp; Mapmaking</h3>
+            <p>Choropleth mapping of Median Household Income — exploring spatial patterns in regional economic data using ArcGIS.</p>
+            <span>Spatial Analysis &middot; WWU</span>
+          </article>
+        </a>
+      </div>
 
-      // ====== Building (box with windowed facades) ======
-      function makeBuilding({ w, d, h, wall, win, roof }) {
-        const colsW = Math.max(2, Math.round(w * 2.1));
-        const colsD = Math.max(2, Math.round(d * 2.1));
-        const rows = Math.max(3, Math.round(h * 2.0));
-        const ws = hex(wall), wn = hex(win);
-        const mW = new THREE.MeshStandardMaterial({ map: facadeTex(ws, wn, colsW, rows), roughness: 0.8 });
-        const mD = new THREE.MeshStandardMaterial({ map: facadeTex(ws, wn, colsD, rows), roughness: 0.8 });
-        const top = mat(roof != null ? roof : wall);
-        const bot = mat(0x2e2a25);
-        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [mD, mD, top, bot, mW, mW]);
-        mesh.position.y = h / 2;
-        mesh.castShadow = mesh.receiveShadow = true;
-        return mesh;
-      }
+      <!-- ── Card 2 · Internship @ SCOG (1 col) ── -->
+      <div class="proj-item">
+        <a class="proj-card"
+           href="#"
+           data-title="Internship @ SCOG"
+           data-src="images/Internship/IMG_2886.JPG"
+           data-type="image"
+           data-tag="Community Outreach"
+           aria-label="Open Internship at SCOG project">
+          <div class="proj-thumb" style="background-image: url('images/Internship/IMG_2886.JPG');"></div>
+          <article>
+            <h3>Internship @ SCOG</h3>
+            <span>Community Outreach &middot; Skagit County</span>
+          </article>
+        </a>
+      </div>
 
-      // ====== Tower (setbacks + optional spire) ======
-      function makeTower({ h, wall, win, roof, spire }) {
-        const g = new THREE.Group();
-        const w = 1.15 + rnd() * 0.25, d = 1.15 + rnd() * 0.25;
-        const h1 = h * 0.66, h2 = h * 0.34;
-        const s1 = makeBuilding({ w, d, h: h1, wall, win, roof: null });
-        s1.position.y = h1 / 2; g.add(s1);
-        const s2 = makeBuilding({ w: w * 0.8, d: d * 0.8, h: h2, wall, win, roof });
-        s2.position.y = h1 + h2 / 2; g.add(s2);
+      <!-- ── Card 3 · Site Plan Design (1 col) ── -->
+      <div class="proj-item">
+        <a class="proj-card"
+           href="#"
+           data-title="Site Plan Design"
+           data-src="images/Site%20Plan/Site%20design%205_27.jpg"
+           data-type="image"
+           data-tag="Urban Design"
+           aria-label="Open Site Plan Design project">
+          <div class="proj-thumb" style="background-image: url('images/Site%20Plan/Site%20design%205_27.jpg');"></div>
+          <article>
+            <h3>Site Plan Design</h3>
+            <span>Urban Design &middot; WWU Studio</span>
+          </article>
+        </a>
+      </div>
 
-        // rooftop box / mechanical
-        if (rnd() < 0.6) {
-          const box = new THREE.Mesh(new THREE.BoxGeometry(w * 0.4, 0.3, d * 0.4), mat(0x55514a));
-          box.position.y = h + 0.15; box.castShadow = true; g.add(box);
-        }
-        if (spire) {
-          const sp = new THREE.Mesh(new THREE.ConeGeometry(0.16, 1.5, 8), mat(0xd8cdb8));
-          sp.position.y = h + 0.75; sp.castShadow = true; g.add(sp);
-          const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.8, 4), mat(0x555555));
-          ant.position.y = h + 1.6; g.add(ant);
-        }
-        return g;
-      }
+      <!-- ── Card 4 · Transportation Studio (full width, horizontal) ── -->
+      <!--
+        No browser-displayable image exists for this project (only HEIC +
+        PDF). The thumb is a branded CSS gradient; the modal shows the PDF.
+      -->
+      <div class="proj-item proj-item--span4">
+        <a class="proj-card proj-card--horizontal"
+           href="#"
+           data-title="Transportation Studio"
+           data-src="images/Studio/Transportation%20-%20Final%20Poster%204.pdf"
+           data-type="pdf"
+           data-tag="Transportation Planning"
+           aria-label="Open Transportation Studio project">
+          <div class="proj-thumb proj-thumb--brand"></div>
+          <article>
+            <h3>Transportation Studio</h3>
+            <p>A comprehensive transportation analysis examining mobility, accessibility, and transit equity — produced as a final studio poster.</p>
+            <span>Transportation Planning &middot; WWU Studio</span>
+          </article>
+        </a>
+      </div>
 
-      // ====== Trees, cars ======
-      function makeTree(scale = 1) {
-        const g = new THREE.Group();
-        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.11, 0.45, 6), mat(0x6b4a2f));
-        trunk.position.y = 0.22; trunk.castShadow = true; g.add(trunk);
-        const greens = [0x4f7a3f, 0x5f8a4a, 0x6f9a55, 0x577f43];
-        const blob = (r, x, y, z) => {
-          const m = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 0), mat(pick(greens)));
-          m.position.set(x, y, z); m.castShadow = true; g.add(m);
-        };
-        blob(0.40, 0, 0.68, 0); blob(0.30, 0.24, 0.55, 0.10);
-        blob(0.27, -0.20, 0.60, -0.10); blob(0.25, 0.04, 0.92, 0.04);
-        g.scale.setScalar(scale);
-        return g;
-      }
-      function makeCar(color) {
-        const g = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.17, 0.26), mat(color, { roughness: 0.5 }));
-        body.position.y = 0.12; body.castShadow = true; g.add(body);
-        const cab = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.14, 0.24), mat(color, { roughness: 0.5 }));
-        cab.position.set(-0.03, 0.26, 0); g.add(cab);
-        return g;
-      }
+    </div><!-- /.projects-grid -->
 
-      const place = (obj, x, z, rot = 0) => { obj.position.x = x; obj.position.z = z; if (rot) obj.rotation.y += rot; city.add(obj); };
+    <!-- =================================================================
+         MODAL
+         ─────────────────────────────────────────────────────────────────
+         Single reusable dialog; main.js fills in the title, tag and media
+         for whichever card was clicked.
 
-      // ====== Roads (perimeter ring) + cars ======
-      const roadMat = mat(0x46433e, { roughness: 1 });
-      function road(w, d, x, z) {
-        const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.06, d), roadMat);
-        m.position.set(x, 0.03, z); m.receiveShadow = true; city.add(m);
-      }
-      road(11.4, 0.95, 0, 5.05); road(11.4, 0.95, 0, -5.05);
-      road(0.95, 11.4, 5.05, 0); road(0.95, 11.4, -5.05, 0);
+         Accessibility:
+           • role="dialog" + aria-modal="true"
+           • aria-labelledby points to the modal heading
+           • Focus moves to the close button on open; returns to the
+             triggering card on close (handled in main.js)
+         ================================================================= -->
+    <div
+      class="modal-overlay"
+      id="proj-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title-text"
+      hidden
+    >
+      <div class="modal-box">
+        <button class="modal-close" aria-label="Close project">&times;</button>
+        <p  class="modal-tag"   id="modal-tag-text"></p>
+        <h2 class="modal-title" id="modal-title-text"></h2>
+        <!-- JS inserts <img> or <embed> here -->
+        <div class="modal-media" id="modal-media"></div>
+      </div>
+    </div>
 
-      const carColors = [0xb8593a, 0x3a4a5a, 0xd8d2c4, 0x6b7a52, 0x8a3a30, 0x44403a];
-      [[-3, 5.05, 0], [1.5, 5.05, 0], [-1, -5.05, 0], [3, -5.05, 0],
-       [5.05, -2.5, Math.PI / 2], [5.05, 2, Math.PI / 2], [-5.05, 3, Math.PI / 2], [-5.05, -1.5, Math.PI / 2]
-      ].forEach(([x, z, r]) => place(makeCar(pick(carColors)), x, z, r));
+  </section><!-- /#projects -->
 
-      // ====== City blocks ======
-      const grid = [-4, -2.4, -0.8, 0.8, 2.4, 4];
-      const stoneCols = [0xd9cdb6, 0xcabfa3, 0xe2d8c2, 0xd0c3a8];
-      const glassCols = [0xb9c6c4, 0xaebfbf, 0xc6d0cb, 0xb0c0c2];
-      const brickCols = [0x9c5a3c, 0x8a4a32, 0xb06a44, 0x7c4a3a, 0xa85f3e];
-      const tanCols   = [0xc9a877, 0xdcc59a, 0xbf9a6a];
-      let landmark = false;
+  <!-- ===== SKILLS ===== -->
+  <section id="skills" aria-label="Skills and tools">
+    <div class="skills-header fade-in">
+      <span class="skills-eyebrow">Toolkit</span>
+      <h2 class="skills-title">My Skills</h2>
+      <p class="skills-sub">Tools and software I work with</p>
+    </div>
 
-      grid.forEach((z) => grid.forEach((x) => {
-        const front = (z + 4) / 8;                 // 0 = back, 1 = front
-        if (rnd() < 0.14) {                        // pocket park
-          place(makeTree(0.85 + rnd() * 0.5), x + (rnd() - 0.5) * 0.4, z + (rnd() - 0.5) * 0.4);
-          if (rnd() < 0.5) place(makeTree(0.7 + rnd() * 0.3), x + 0.5, z + 0.45);
-          return;
-        }
-        const h = (4.7 - front * 3.5) * (0.8 + rnd() * 0.5);
+    <div class="skills-grid" role="list" aria-label="List of skills">
 
-        if (h > 3.0) {                             // skyscraper
-          const stone = rnd() < 0.5;
-          const wall = stone ? pick(stoneCols) : pick(glassCols);
-          const win = stone ? 0xe6d8bd : 0xc6d2d6;
-          const spire = !landmark && z <= -2.4 && Math.abs(x) < 1.3;
-          if (spire) landmark = true;
-          place(makeTower({ h, wall, win, roof: 0x4a4742, spire }), x, z, (rnd() - 0.5) * 0.18);
-        } else if (h > 1.9) {                       // brick mid-rise
-          const b = makeBuilding({ w: 1.2 + rnd() * 0.2, d: 1.2 + rnd() * 0.2, h, wall: pick(brickCols), win: 0xe7d6b8, roof: 0x4a4742 });
-          place(b, x, z, (rnd() - 0.5) * 0.28);
-        } else {                                    // low shop / brownstone
-          const b = makeBuilding({ w: 1.25, d: 1.25, h, wall: pick(brickCols.concat(tanCols)), win: 0xe7d6b8, roof: rnd() < 0.5 ? 0xb8593a : 0x4a4742 });
-          place(b, x, z, (rnd() - 0.5) * 0.4);
-        }
-      }));
+      <div class="skill-item" role="listitem">
+        <div class="skill-icon">
+          <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-excel/default.svg"
+               alt="Microsoft Excel" width="48" height="48" loading="lazy" />
+        </div>
+        <span class="skill-name">Microsoft Excel</span>
+      </div>
 
-      // a few extra street trees scattered in the gaps
-      for (let i = 0; i < 10; i++) {
-        place(makeTree(0.7 + rnd() * 0.4), (rnd() - 0.5) * 9.4, (rnd() - 0.5) * 9.4);
-      }
+      <div class="skill-item" role="listitem">
+        <div class="skill-icon">
+          <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-word/default.svg"
+               alt="Microsoft Word" width="48" height="48" loading="lazy" />
+        </div>
+        <span class="skill-name">Microsoft Word</span>
+      </div>
 
-      // ====== Render loop ======
-      const clock = new THREE.Clock();
-      function resize() {
-        const w = canvas.clientWidth, h = canvas.clientHeight;
-        if (w === 0 || h === 0) return;
-        if (canvas.width !== Math.floor(w * renderer.getPixelRatio()) || canvas.height !== Math.floor(h * renderer.getPixelRatio())) {
-          renderer.setSize(w, h, false);
-          camera.aspect = w / h;
-          camera.updateProjectionMatrix();
-        }
-      }
-      function animate() {
-        resize();
-        const t = clock.getElapsedTime();
-        city.position.y = Math.sin(t * 0.9) * 0.22;   // gentle float
-        controls.update();
-        renderer.render(scene, camera);
-        requestAnimationFrame(animate);
-      }
-      animate();
-      window.addEventListener("resize", resize);
-    }
-  </script>
+      <div class="skill-item" role="listitem">
+        <div class="skill-icon">
+          <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/microsoft-powerpoint/default.svg"
+               alt="Microsoft PowerPoint" width="48" height="48" loading="lazy" />
+        </div>
+        <span class="skill-name">PowerPoint</span>
+      </div>
+
+      <div class="skill-item" role="listitem">
+        <div class="skill-icon">
+          <img src="https://cdn.simpleicons.org/sketchup/005F9E"
+               alt="SketchUp" width="48" height="48" loading="lazy" />
+        </div>
+        <span class="skill-name">SketchUp</span>
+      </div>
+
+      <div class="skill-item" role="listitem">
+        <div class="skill-icon">
+          <img src="https://cdn.simpleicons.org/arcgis/007AC2"
+               alt="ArcGIS" width="48" height="48" loading="lazy" />
+        </div>
+        <span class="skill-name">ArcGIS</span>
+      </div>
+
+      <div class="skill-item" role="listitem">
+        <div class="skill-icon">
+          <img src="images/Photos/adobe_indesign_software_computer_app_design_software_icon_191061.svg"
+               alt="Adobe InDesign" width="48" height="48" loading="lazy" />
+        </div>
+        <span class="skill-name">Adobe InDesign</span>
+      </div>
+
+    </div>
+  </section><!-- /#skills -->
+
+  <script src="js/main.js" defer></script>
 </body>
 </html>
