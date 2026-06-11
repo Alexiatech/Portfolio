@@ -87,6 +87,46 @@
 
 }());
 
+/* =========================================================
+   HAMBURGER MENU
+   ─────────────────────────────────────────────────────────
+   Toggles .is-open on both the button and the nav-links list.
+   Closes automatically when a link is clicked or Escape pressed.
+========================================================= */
+(function initHamburger() {
+  const btn   = document.querySelector('.nav-hamburger');
+  const links = document.getElementById('nav-links');
+  if (!btn || !links) return;
+
+  function openMenu() {
+    btn.classList.add('is-open');
+    links.classList.add('is-open');
+    btn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    btn.classList.remove('is-open');
+    links.classList.remove('is-open');
+    btn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', () => {
+    btn.classList.contains('is-open') ? closeMenu() : openMenu();
+  });
+
+  /* Close when any nav link is clicked */
+  links.querySelectorAll('a').forEach((a) => {
+    a.addEventListener('click', closeMenu);
+  });
+
+  /* Close on Escape */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && btn.classList.contains('is-open')) closeMenu();
+  });
+}());
+
 /* ── Nav: highlight active section link on scroll ── */
 const sections = document.querySelectorAll('section[id]');
 const navLinks  = document.querySelectorAll('.nav-links a');
@@ -104,7 +144,7 @@ const sectionObserver = new IntersectionObserver(
       }
     });
   },
-  { threshold: 0.15 }  /* lower threshold so tall sections (like projects) still trigger */
+  { threshold: 0.25 }  /* lower threshold so tall sections (like projects) still trigger */
 );
 
 sections.forEach((section) => sectionObserver.observe(section));
