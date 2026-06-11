@@ -3,6 +3,25 @@
 ========================================================= */
 
 /* =========================================================
+   LOADING SCREEN
+   ─────────────────────────────────────────────────────────
+   After the CSS fade-out animation (2s) finishes, hide the
+   element entirely so it no longer blocks interaction.
+   A 2.1s setTimeout acts as a fallback.
+========================================================= */
+(function initLoadingScreen() {
+  const screen = document.getElementById('loading-screen');
+  if (!screen) return;
+
+  function hideScreen() {
+    screen.style.display = 'none';
+  }
+
+  screen.addEventListener('animationend', hideScreen, { once: true });
+  setTimeout(hideScreen, 2200); /* fallback */
+}());
+
+/* =========================================================
    HERO MAP — MapLibre GL (3D animated, Seattle → Bellingham)
    ─────────────────────────────────────────────────────────
    Tiles:  OpenFreeMap Positron (free, no API key)
@@ -246,4 +265,45 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
 
 }());
 
-/* Skills section is static — no JS needed. */
+/* =========================================================
+   EXPERIENCE TIMELINE — scroll-triggered slide animations
+   ─────────────────────────────────────────────────────────
+   Each .tl-item is observed. When it enters the viewport the
+   card slides in from its side (.tl-visible). When it leaves
+   through the TOP (scrolled past) the card exits to the
+   opposite side (.tl-gone). Scrolling back down resets it.
+========================================================= */
+(function initTimeline() {
+
+  const items = document.querySelectorAll('.tl-item');
+  if (!items.length) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const el = entry.target;
+
+        if (entry.isIntersecting) {
+          /* Entering the viewport — animate in */
+          el.classList.add('tl-visible');
+          el.classList.remove('tl-gone');
+        } else {
+          const rect = el.getBoundingClientRect();
+
+          if (rect.bottom < 0) {
+            /* Scrolled completely past — exit to opposite side */
+            el.classList.remove('tl-visible');
+            el.classList.add('tl-gone');
+          } else {
+            /* Below the viewport — restore initial offset (not yet reached) */
+            el.classList.remove('tl-visible', 'tl-gone');
+          }
+        }
+      });
+    },
+    { threshold: 0.18 }
+  );
+
+  items.forEach((item) => observer.observe(item));
+
+}());
