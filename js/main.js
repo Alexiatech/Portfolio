@@ -323,6 +323,44 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
 }());
 
 /* =========================================================
+   ICON STRIP — scroll-triggered slide-in / slide-out
+   ─────────────────────────────────────────────────────────
+   Icons slide in from their respective sides when the section
+   enters the viewport. When the user scrolls far down past it
+   (section top is above the viewport), icons slide out to the
+   opposite side. Scrolling back resets them.
+========================================================= */
+(function initIconStrip() {
+
+  const strip = document.getElementById('icon-strip');
+  if (!strip) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        /* Section in view — slide icons in */
+        strip.classList.add('is-strip-visible');
+        strip.classList.remove('is-strip-gone');
+      } else {
+        const rect = strip.getBoundingClientRect();
+        if (rect.top < 0) {
+          /* Section top is above viewport — still visible but scrolling away */
+          strip.classList.remove('is-strip-visible');
+          strip.classList.add('is-strip-gone');
+        } else {
+          /* Not yet reached — reset to initial off-screen positions */
+          strip.classList.remove('is-strip-visible', 'is-strip-gone');
+        }
+      }
+    },
+    { threshold: 0.2 }
+  );
+
+  observer.observe(strip);
+
+}());
+
+/* =========================================================
    EXPERIENCE TIMELINE — scroll-triggered slide animations
    ─────────────────────────────────────────────────────────
    Each .tl-item is observed. When it enters the viewport the

@@ -1359,6 +1359,148 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   text-decoration: underline;
 }
 
+/* =========================================================
+   ICON STRIP
+   ─────────────────────────────────────────────────────────
+   Horizontal row of scattered icons between hero and projects.
+   Each icon starts off-screen (translateX) and slides in via JS.
+   Vertical scatter is achieved with per-nth-child margin-top offsets.
+========================================================= */
+#icon-strip {
+  padding: 3rem 5% 2rem;
+  overflow: hidden;          /* keep sliding icons from widening the page */
+}
+
+.icon-strip-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;   /* allow vertical scatter via margin-top */
+  gap: 2.5rem;
+  flex-wrap: nowrap;
+}
+
+/* Each icon wrapper */
+.icon-strip-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  /* Default off-screen positions set by JS using data-side */
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity   0.55s ease;
+  will-change: transform, opacity;
+}
+
+/* All icons same size */
+.icon-strip-item img {
+  width: 64px;
+  height: 64px;
+  display: block;
+  animation: iconSway var(--sway-dur, 3s) ease-in-out infinite var(--sway-delay, 0s);
+  transform-origin: center bottom;
+}
+
+@keyframes iconSway {
+  0%   { transform: rotate(0deg); }
+  30%  { transform: rotate(-4deg); }
+  70%  { transform: rotate( 4deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Each icon gets its own duration + delay so they sway independently */
+.icon-strip-item:nth-child(1) img { --sway-dur: 3.1s; --sway-delay: 0.0s; }
+.icon-strip-item:nth-child(2) img { --sway-dur: 2.7s; --sway-delay: 0.8s; }
+.icon-strip-item:nth-child(3) img { --sway-dur: 3.5s; --sway-delay: 0.3s; }
+.icon-strip-item:nth-child(4) img { --sway-dur: 2.9s; --sway-delay: 1.4s; }
+.icon-strip-item:nth-child(5) img { --sway-dur: 3.8s; --sway-delay: 0.6s; }
+.icon-strip-item:nth-child(6) img { --sway-dur: 2.6s; --sway-delay: 1.1s; }
+.icon-strip-item:nth-child(7) img { --sway-dur: 3.3s; --sway-delay: 0.2s; }
+.icon-strip-item:nth-child(8) img { --sway-dur: 2.8s; --sway-delay: 1.7s; }
+.icon-strip-item:nth-child(9) img { --sway-dur: 3.6s; --sway-delay: 0.9s; }
+
+/* ── Vertical scatter: each item gets a different top offset ── */
+.icon-strip-item:nth-child(1)  { margin-top: 10px; }
+.icon-strip-item:nth-child(2)  { margin-top: 40px; }
+.icon-strip-item:nth-child(3)  { margin-top:  5px; }
+.icon-strip-item:nth-child(4)  { margin-top: 50px; }
+.icon-strip-item:nth-child(5)  { margin-top:  0px; }
+.icon-strip-item:nth-child(6)  { margin-top: 35px; }
+.icon-strip-item:nth-child(7)  { margin-top: 15px; }
+.icon-strip-item:nth-child(8)  { margin-top: 45px; }
+.icon-strip-item:nth-child(9)  { margin-top: 20px; }
+
+/* Off-screen starting positions (set before JS kicks in) */
+.icon-strip-item[data-side="left"]  { transform: translateX(-180px); }
+.icon-strip-item[data-side="right"] { transform: translateX( 180px); }
+
+/* Stagger delays when sliding in */
+.icon-strip-item:nth-child(1) { transition-delay: 0.00s; }
+.icon-strip-item:nth-child(2) { transition-delay: 0.06s; }
+.icon-strip-item:nth-child(3) { transition-delay: 0.12s; }
+.icon-strip-item:nth-child(4) { transition-delay: 0.08s; }
+.icon-strip-item:nth-child(5) { transition-delay: 0.04s; }
+.icon-strip-item:nth-child(6) { transition-delay: 0.10s; }
+.icon-strip-item:nth-child(7) { transition-delay: 0.14s; }
+.icon-strip-item:nth-child(8) { transition-delay: 0.02s; }
+.icon-strip-item:nth-child(9) { transition-delay: 0.16s; }
+
+/* Visible state — JS adds .is-strip-visible to the section */
+#icon-strip.is-strip-visible .icon-strip-item {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Gone state (scrolled past) — JS adds .is-strip-gone */
+/* Items exit the same side they entered from */
+#icon-strip.is-strip-gone .icon-strip-item[data-side="left"]  {
+  transform: translateX(-180px);
+  opacity: 0;
+}
+#icon-strip.is-strip-gone .icon-strip-item[data-side="right"] {
+  transform: translateX( 180px);
+  opacity: 0;
+}
+
+/* Remove transition-delay when exiting so it looks snappy */
+#icon-strip.is-strip-gone .icon-strip-item {
+  transition-delay: 0s !important;
+}
+
+/* ── Responsive: tablet ── */
+@media (max-width: 768px) {
+  .icon-strip-row { gap: 1.4rem; }
+  .icon-strip-item img { width: 52px; height: 52px; }
+
+  /* Tighten scatter so nothing clips */
+  .icon-strip-item:nth-child(2) { margin-top: 28px; }
+  .icon-strip-item:nth-child(4) { margin-top: 36px; }
+  .icon-strip-item:nth-child(6) { margin-top: 24px; }
+  .icon-strip-item:nth-child(8) { margin-top: 32px; }
+}
+
+/* ── Responsive: mobile — wrap into two rows ── */
+@media (max-width: 480px) {
+  #icon-strip { padding: 2rem 4% 1.5rem; }
+
+  .icon-strip-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.2rem 1.8rem;
+  }
+
+  .icon-strip-item img { width: 44px; height: 44px; }
+
+  /* Reset vertical scatter on mobile to keep rows tidy */
+  .icon-strip-item { margin-top: 0 !important; }
+
+  /* Slide distance smaller on narrow screens */
+  .icon-strip-item[data-side="left"]  { transform: translateX(-100px); }
+  .icon-strip-item[data-side="right"] { transform: translateX( 100px); }
+
+  #icon-strip.is-strip-gone .icon-strip-item[data-side="left"]  { transform: translateX(-100px); }
+  #icon-strip.is-strip-gone .icon-strip-item[data-side="right"] { transform: translateX( 100px); }
+}
+
 /* Responsive: resume embed height on mobile */
 @media (max-width: 480px) {
   .resume-embed {
