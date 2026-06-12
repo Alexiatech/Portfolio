@@ -818,6 +818,8 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   border-radius: calc(var(--radius) - 4px);
   overflow: hidden;
   background: var(--green-lt);
+  display: flex;
+  flex-direction: column;
 }
 
 /* Inserted <img> */
@@ -1344,6 +1346,18 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   border: none;
 }
 
+/* Resume slide viewer wrapper */
+.resume-slides-wrap {
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(30, 42, 34, 0.12);
+  min-height: 200px;
+}
+
+.resume-slides-wrap .slides-canvas {
+  max-height: 80vh;
+}
+
 .resume-fallback {
   text-align: center;
   padding: 1rem;
@@ -1360,6 +1374,108 @@ border: 1px solid rgba(9, 79, 25, 0.3);
 
 .resume-fallback a:hover {
   text-decoration: underline;
+}
+
+/* =========================================================
+   SLIDE VIEWER
+   Horizontal snap-scroll strip of PDF pages with nav buttons
+========================================================= */
+.slides-container {
+  position: relative;
+  width: 100%;
+  background: #1a1a1a;
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-height: 200px;
+}
+
+/* Horizontal scrolling track */
+.slides-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;          /* hide scrollbar */
+  -ms-overflow-style: none;
+  gap: 0;
+}
+.slides-track::-webkit-scrollbar { display: none; }
+
+/* Each slide */
+.slides-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #1a1a1a;
+}
+
+.slides-canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 68vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Prev / Next buttons */
+.slides-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  backdrop-filter: blur(4px);
+}
+.slides-btn:hover:not(:disabled) { background: rgba(255,255,255,0.3); }
+.slides-btn:disabled { opacity: 0.25; cursor: default; }
+.slides-btn--prev { left: 0.75rem; }
+.slides-btn--next { right: 0.75rem; }
+
+/* Page counter */
+.slides-counter {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.75);
+  font-size: 0.8rem;
+  background: rgba(0,0,0,0.4);
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+
+/* Loading state */
+.slides-loading {
+  padding: 3rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* Wrapper when multiple viewers stack vertically */
+.slides-wrap {
+  width: 100%;
+}
+
+/* Divider between two slide viewers */
+.slides-divider {
+  border: none;
+  border-top: 2px solid rgba(255,255,255,0.1);
+  margin: 0;
 }
 
 /* =========================================================

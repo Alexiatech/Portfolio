@@ -123,6 +123,153 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
          We remove it before triggering the CSS fade-in so
          the element is in the DOM for the transition.
 ========================================================= */
+
+/* =========================================================
+   SLIDE VIEWER — PDF.js horizontal presentation viewer
+   ─────────────────────────────────────────────────────────
+   Loads PDF.js from CDN, renders every page as a canvas,
+   and displays them in a horizontal snap-scroll strip with
+   prev/next arrow buttons and a page counter.
+========================================================= */
+const PDFJS_CDN  = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+function loadSlideViewer(src, container) {
+  /* Show a loading message while PDF.js boots */
+  container.innerHTML = '<p class="slides-loading">Loading presentation…</p>';
+
+  function initViewer() {
+    const pdfjsLib = window['pdfjs-dist/build/pdf'];
+    pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+
+    pdfjsLib.getDocument(src).promise.then((pdf) => {
+      const totalPages = pdf.numPages;
+
+      /* Build the viewer shell */
+      container.innerHTML = '';
+      container.classList.add('slides-container');
+
+      const track    = document.createElement('div');
+      track.className = 'slides-track';
+      container.appendChild(track);
+
+      /* Prev / Next buttons */
+      const btnPrev = document.createElement('button');
+      btnPrev.className   = 'slides-btn slides-btn--prev';
+      btnPrev.innerHTML   = '&#8592;';
+      btnPrev.setAttribute('aria-label', 'Previous slide');
+
+      const btnNext = document.createElement('button');
+      btnNext.className   = 'slides-btn slides-btn--next';
+      btnNext.innerHTML   = '&#8594;';
+      btnNext.setAttribute('aria-label', 'Next slide');
+
+      const counter = document.createElement('span');
+      counter.className = 'slides-counter';
+
+      container.appendChild(btnPrev);
+      container.appendChild(btnNext);
+      container.appendChild(counter);
+
+      /* Hide nav controls for single-page PDFs */
+      if (totalPages === 1) {
+        btnPrev.hidden  = true;
+        btnNext.hidden  = true;
+        counter.hidden  = true;
+      }
+
+      let currentPage = 1;
+
+      function updateCounter() {
+        counter.textContent = currentPage + ' / ' + totalPages;
+      }
+
+      function goTo(page) {
+        currentPage = Math.max(1, Math.min(totalPages, page));
+        const slide = track.children[currentPage - 1];
+        if (slide) slide.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        updateCounter();
+        btnPrev.disabled = currentPage === 1;
+        btnNext.disabled = currentPage === totalPages;
+      }
+
+      btnPrev.addEventListener('click', () => goTo(currentPage - 1));
+      btnNext.addEventListener('click', () => goTo(currentPage + 1));
+
+      /* Keyboard left/right when modal is open */
+      function onKey(e) {
+        if (e.key === 'ArrowLeft')  goTo(currentPage - 1);
+        if (e.key === 'ArrowRight') goTo(currentPage + 1);
+      }
+      document.addEventListener('keydown', onKey);
+      /* Clean up listener when modal closes */
+      container.addEventListener('slides-destroy', () => {
+        document.removeEventListener('keydown', onKey);
+      }, { once: true });
+
+      /* Render all pages */
+      const renders = [];
+      for (let i = 1; i <= totalPages; i++) {
+        renders.push(
+          pdf.getPage(i).then((page) => {
+            const viewport = page.getViewport({ scale: 1.6 });
+            const canvas   = document.createElement('canvas');
+            canvas.className        = 'slides-canvas';
+            canvas.dataset.pageNum  = i;
+            canvas.width  = viewport.width;
+            canvas.height = viewport.height;
+
+            /* Insert in order */
+            const placeholder = document.createElement('div');
+            placeholder.className = 'slides-slide';
+            placeholder.dataset.pageNum = i;
+            placeholder.appendChild(canvas);
+            track.appendChild(placeholder);
+
+            return page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+          })
+        );
+      }
+
+      Promise.all(renders).then(() => {
+        /* Sort slides by page number (async may finish out of order) */
+        const slides = Array.from(track.children).sort(
+          (a, b) => a.dataset.pageNum - b.dataset.pageNum
+        );
+        slides.forEach((s) => track.appendChild(s));
+        goTo(1);
+
+        /* Update counter on scroll */
+        track.addEventListener('scroll', () => {
+          const slideWidth = track.firstChild ? track.firstChild.offsetWidth : 1;
+          const page = Math.round(track.scrollLeft / slideWidth) + 1;
+          if (page !== currentPage) {
+            currentPage = page;
+            updateCounter();
+            btnPrev.disabled = currentPage === 1;
+            btnNext.disabled = currentPage === totalPages;
+          }
+        });
+      });
+
+      updateCounter();
+
+    }).catch((err) => {
+      container.innerHTML = '<p class="slides-loading">Could not load PDF: ' + err.message + '</p>';
+    });
+  }
+
+  /* Load PDF.js once, then init */
+  if (window['pdfjs-dist/build/pdf']) {
+    initViewer();
+  } else {
+    const script  = document.createElement('script');
+    script.src    = PDFJS_CDN;
+    script.onload = initViewer;
+    document.head.appendChild(script);
+  }
+}
+
 (function initModal() {
 
   const overlay   = document.getElementById('proj-modal');
@@ -144,6 +291,7 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
     const title = card.getAttribute('data-title') || '';
     const tag   = card.getAttribute('data-tag')   || '';
     const src   = card.getAttribute('data-src')   || '';
+    const src2  = card.getAttribute('data-src2')  || '';
     const type  = card.getAttribute('data-type')  || 'image';
     const desc  = card.getAttribute('data-desc')  || '';
 
@@ -160,11 +308,24 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
     /* Build media element */
     mediaEl.innerHTML = '';   /* clear previous */
 
-    if (type === 'pdf') {
-      /*
-        <embed> renders the PDF natively in the browser viewer.
-        If the browser can't display it, a fallback link is shown.
-      */
+    if (type === 'slides') {
+      /* ── Horizontal slide viewer(s) using PDF.js ── */
+      const wrap1 = document.createElement('div');
+      wrap1.className = 'slides-wrap';
+      mediaEl.appendChild(wrap1);
+      loadSlideViewer(src, wrap1);
+
+      if (src2) {
+        const divider = document.createElement('hr');
+        divider.className = 'slides-divider';
+        mediaEl.appendChild(divider);
+
+        const wrap2 = document.createElement('div');
+        wrap2.className = 'slides-wrap';
+        mediaEl.appendChild(wrap2);
+        loadSlideViewer(src2, wrap2);
+      }
+    } else if (type === 'pdf') {
       const embed = document.createElement('embed');
       embed.src   = src;
       embed.type  = 'application/pdf';
@@ -215,6 +376,8 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
       if (closed) return;
       closed = true;
       overlay.setAttribute('hidden', '');
+      /* Fire cleanup event so slide viewer removes its keydown listener */
+      mediaEl.dispatchEvent(new Event('slides-destroy'));
       mediaEl.innerHTML = '';   /* free any loaded PDF / image */
     };
     overlay.addEventListener('transitionend', finish, { once: true });
@@ -433,6 +596,29 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
 
   });
 
+}());
+
+/* =========================================================
+   RESUME — slide viewer
+   ─────────────────────────────────────────────────────────
+   Loads the resume PDF as a slide viewer when the section
+   first scrolls into view (lazy init, one-time only).
+========================================================= */
+(function initResumeSlides() {
+  const wrap = document.getElementById('resume-slides');
+  if (!wrap) return;
+
+  let loaded = false;
+
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting && !loaded) {
+      loaded = true;
+      loadSlideViewer('images/PDFResume.pdf', wrap);
+      observer.disconnect();
+    }
+  }, { threshold: 0.1 });
+
+  observer.observe(wrap);
 }());
 
 /* =========================================================
