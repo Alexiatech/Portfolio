@@ -361,6 +361,146 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
 }());
 
 /* =========================================================
+   ICON STRIP — drag to reposition
+   ─────────────────────────────────────────────────────────
+   Each icon can be grabbed and dropped anywhere on the page.
+   On drag start the icon detaches from the flex row and becomes
+   fixed-positioned. On drop it stays wherever it was released.
+   Supports both mouse and touch input.
+   Double-click / double-tap snaps the icon back to the strip.
+========================================================= */
+(function initIconDrag() {
+
+  const strip = document.getElementById('icon-strip');
+  if (!strip) return;
+
+  const items = strip.querySelectorAll('.icon-strip-item');
+
+  items.forEach((item) => {
+
+    /* Store original parent + next sibling so we can snap back */
+    const originalParent  = item.parentElement;
+    let   originalSibling = item.nextSibling;
+
+    let isDragging  = false;
+    let floater     = null;   /* the fixed-position ghost we drag */
+    let offsetX     = 0;
+    let offsetY     = 0;
+    let isDetached  = false;
+
+    /* ── helpers ── */
+    function clientPos(e) {
+      const src = e.touches ? e.touches[0] : e;
+      return { x: src.clientX, y: src.clientY };
+    }
+
+    function detach(clientX, clientY) {
+      if (isDetached) return;
+      isDetached = true;
+
+      const rect = item.getBoundingClientRect();
+
+      /* Place icon absolutely in document space so it scrolls with the page */
+      item.style.position   = 'absolute';
+      item.style.left       = (rect.left + window.scrollX) + 'px';
+      item.style.top        = (rect.top  + window.scrollY) + 'px';
+      item.style.zIndex     = '500';
+      item.style.margin     = '0';
+      item.style.transition = 'none';
+      item.style.opacity    = '1';
+      item.style.transform  = 'translateX(0) scale(1.15)';
+      item.style.cursor     = 'grabbing';
+      document.body.appendChild(item);
+
+      /* offsetX/Y are in viewport space — that's fine, clientX is too */
+      offsetX = clientX - rect.left;
+      offsetY = clientY - rect.top;
+    }
+
+    function moveTo(clientX, clientY) {
+      /* clientX is viewport, convert to document space via scroll offset */
+      item.style.left = (clientX - offsetX + window.scrollX) + 'px';
+      item.style.top  = (clientY - offsetY + window.scrollY) + 'px';
+    }
+
+    function drop() {
+      if (!isDetached) return;
+      item.style.transform = 'translateX(0) scale(1)';
+      item.style.cursor    = 'grab';
+      isDragging = false;
+    }
+
+    function snapBack() {
+      if (!isDetached) return;
+      document.body.removeChild(item);
+
+      /* Restore original position in flex row */
+      originalSibling = originalSibling && originalSibling.parentElement === originalParent
+        ? originalSibling : null;
+      originalParent.insertBefore(item, originalSibling);
+
+      item.style.cssText = '';   /* wipe all inline styles */
+      isDetached = false;
+    }
+
+    /* ── Mouse events ── */
+    item.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      isDragging = true;
+      const { x, y } = clientPos(e);
+      detach(x, y);
+
+      function onMove(e) {
+        if (!isDragging) return;
+        const { x, y } = clientPos(e);
+        moveTo(x, y);
+      }
+      function onUp() {
+        drop();
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup',   onUp);
+      }
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup',   onUp);
+    });
+
+    /* ── Touch events ── */
+    item.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      isDragging = true;
+      const { x, y } = clientPos(e);
+      detach(x, y);
+
+      function onMove(e) {
+        e.preventDefault();
+        const { x, y } = clientPos(e);
+        moveTo(x, y);
+      }
+      function onEnd() {
+        drop();
+        window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('touchend',  onEnd);
+      }
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('touchend',  onEnd);
+    }, { passive: false });
+
+    /* ── Double-click / double-tap → snap back ── */
+    item.addEventListener('dblclick', snapBack);
+
+    let lastTap = 0;
+    item.addEventListener('touchend', () => {
+      const now = Date.now();
+      if (now - lastTap < 300) snapBack();
+      lastTap = now;
+    });
+
+  });
+
+}());
+
+/* =========================================================
    EXPERIENCE TIMELINE — scroll-triggered slide animations
    ─────────────────────────────────────────────────────────
    Each .tl-item is observed. When it enters the viewport the
