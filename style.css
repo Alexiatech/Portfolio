@@ -638,6 +638,12 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   min-height: 220px;
 }
 
+.proj-thumb--oxford {
+  background-image: url('images/oxford_brookes.jpeg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
 /* ================================================================
    THUMBNAIL
    Uses padding-bottom to maintain a 16:10 aspect ratio without
