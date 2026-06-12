@@ -855,10 +855,7 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   margin-bottom: 0;
 }
 
-/* Oxford card — green gradient thumbnail */
-.proj-thumb--oxford {
-  background: linear-gradient(135deg, #3d5a80 0%, #3d6b52 100%);
-}
+
 
 /* =========================================================
    RESPONSIVE
