@@ -195,6 +195,7 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
   const closeBtn  = overlay && overlay.querySelector('.modal-close');
   const titleEl   = document.getElementById('modal-title-text');
   const tagEl     = document.getElementById('modal-tag-text');
+  const descEl    = document.getElementById('modal-desc-text');
   const mediaEl   = document.getElementById('modal-media');
   const cards     = document.querySelectorAll('.proj-card');
 
@@ -209,10 +210,17 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
     const tag   = card.getAttribute('data-tag')   || '';
     const src   = card.getAttribute('data-src')   || '';
     const type  = card.getAttribute('data-type')  || 'image';
+    const desc  = card.getAttribute('data-desc')  || '';
 
     /* Populate text */
     titleEl.innerHTML = title;
     tagEl.textContent = tag;
+
+    /* Populate description (supports simple HTML like <strong> and <br>) */
+    if (descEl) {
+      descEl.innerHTML = desc;
+      descEl.style.display = desc ? '' : 'none';
+    }
 
     /* Build media element */
     mediaEl.innerHTML = '';   /* clear previous */
@@ -228,6 +236,15 @@ fadeEls.forEach((el) => fadeObserver.observe(el));
       embed.title = title;
       embed.setAttribute('aria-label', title + ' PDF');
       mediaEl.appendChild(embed);
+    } else if (type === 'youtube') {
+      /* YouTube embed — src should be the video ID */
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube.com/embed/' + src;
+      iframe.title = title;
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      iframe.setAttribute('aria-label', title + ' video');
+      mediaEl.appendChild(iframe);
     } else {
       /* Default: image */
       const img = document.createElement('img');

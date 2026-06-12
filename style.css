@@ -830,6 +830,36 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   display: block;
 }
 
+/* Inserted <iframe> for YouTube */
+.modal-media iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  display: block;
+  border: none;
+}
+
+/* Description text shown above media in the modal */
+.modal-desc {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+}
+
+.modal-desc p {
+  margin: 0 0 0.75rem;
+}
+
+.modal-desc p:last-child {
+  margin-bottom: 0;
+}
+
+/* Oxford card — green gradient thumbnail */
+.proj-thumb--oxford {
+  background: linear-gradient(135deg, #3d5a80 0%, #3d6b52 100%);
+}
+
 /* =========================================================
    RESPONSIVE
 ========================================================= */
