@@ -84,12 +84,10 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 1.1rem 5%;
-  background:var(--cream)(9, 79, 25, 0.43);
-
-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-backdrop-filter: blur(8.9px);
--webkit-backdrop-filter: blur(8.9px);
+  background: rgba(247, 244, 239, 0.85);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(61, 107, 82, 0.12);
 }
 
@@ -161,180 +159,7 @@ backdrop-filter: blur(8.9px);
 }
 
 /* =========================================================
-   HERO — FULLSCREEN MAP
-========================================================= */
-#hero {
-  position: relative;
-  height: 100vh;
-  min-height: 500px;
-  overflow: hidden;
-}
-
-/* MapLibre map fills the entire hero */
-#hero-map {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-
-/* MapLibre attribution — keep it subtle */
-#hero-map .maplibregl-ctrl-attrib {
-  font-size: 0.65rem;
-  background: rgba(247, 244, 239, 0.75);
-  backdrop-filter: blur(4px);
-}
-
-/* ---- Overlay card ---- */
-.hero-map-overlay {
-  position: absolute;
-  bottom: 2.5rem;
-  left: 5%;
-  z-index: 100;
-
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: var(--radius);
-  padding: 1.75rem 2rem 1.5rem;
-  max-width: 400px;
-
-  /* From https://css.glass */
-background: rgba(9, 79, 25, 0.43);
-border-radius: 16px;
-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-backdrop-filter: blur(8.9px);
--webkit-backdrop-filter: blur(8.9px);
-border: 1px solid rgba(9, 79, 25, 0.3);
-
-
-}
-
-.hero-map-overlay .eyebrow {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--green);
-  background: var(--green-lt);
-  padding: 0.28rem 0.8rem;
-  border-radius: 999px;
-  margin-bottom: 0.75rem;
-
-
-}
-
-.hero-map-overlay h1 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.9rem, 4vw, 2.8rem);
-  line-height: 1.12;
-  color: var(--text);
-  margin-bottom: 0.45rem;
-}
-
-.hero-map-sub {
-  font-size: 0.88rem;
-  color: var(--muted);
-  line-height: 1.55;
-  margin-bottom: 0.9rem;
-}
-
-/* Live data badge */
-.hero-map-live {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-bottom: 1.1rem;
-}
-
-.live-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #4caf78;
-  flex-shrink: 0;
-  animation: pulse 2s ease infinite;
-}
-
-/* Scroll down arrow */
-.scroll-hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--green);
-  font-size: 0.83rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: gap 0.2s;
-  animation: scrollBounce 2.4s ease infinite;
-}
-
-.scroll-hint:hover { gap: 0.65rem; }
-
-@keyframes scrollBounce {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(4px); }
-}
-
-/* ---- Leaflet custom styles ---- */
-
-/* City reference dot */
-.map-city-dot {
-  width: 10px;
-  height: 10px;
-  background: var(--green);
-  border: 2px solid #fff;
-  border-radius: 50%;
-  box-shadow: 0 1px 4px rgba(30, 42, 34, 0.25);
-}
-
-/* Construction pulsing dot */
-.map-construction-dot {
-  width: 12px;
-  height: 12px;
-  background: var(--clay);
-  border: 2px solid #fff;
-  border-radius: 50%;
-  box-shadow: 0 0 0 0 rgba(194, 107, 63, 0.55);
-  animation: constructionPulse 2s ease-out infinite;
-}
-
-@keyframes constructionPulse {
-  0%   { box-shadow: 0 0 0 0   rgba(194, 107, 63, 0.55); }
-  70%  { box-shadow: 0 0 0 9px rgba(194, 107, 63, 0); }
-  100% { box-shadow: 0 0 0 0   rgba(194, 107, 63, 0); }
-}
-
-/* City label tooltips */
-.map-city-label {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  font-family: 'Inter', sans-serif !important;
-  font-size: 0.7rem !important;
-  font-weight: 700 !important;
-  color: var(--text) !important;
-  letter-spacing: 0.06em !important;
-  text-transform: uppercase !important;
-  white-space: nowrap !important;
-}
-
-.map-city-label::before { display: none !important; }
-
-/* Popup styling */
-.leaflet-popup-content-wrapper {
-  border-radius: var(--radius) !important;
-  font-family: 'Inter', sans-serif !important;
-  font-size: 0.82rem !important;
-  box-shadow: 0 6px 20px rgba(30, 42, 34, 0.14) !important;
-}
-
-/* =========================================================
-   HERO INFO — bio + photo below the map
+   HERO INFO — bio + photo
 ========================================================= */
 #hero-info {
   min-height: 100vh;
@@ -354,19 +179,6 @@ border: 1px solid rgba(9, 79, 25, 0.3);
 }
 
 /* Text column */
-.hero-text .eyebrow {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--green);
-  background: var(--green-lt);
-  padding: 0.3rem 0.85rem;
-  border-radius: 999px;
-  margin-bottom: 1.1rem;
-}
-
 .hero-text h1 {
   font-family: 'DM Serif Display', serif;
   font-size: clamp(2.6rem, 5vw, 3.8rem);
@@ -460,37 +272,6 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   box-shadow: 0 8px 32px rgba(30, 42, 34, 0.15);
 }
 
-.hero-badge {
-  position: absolute;
-  bottom: 1.5rem;
-  left: -1.5rem;
-  z-index: 2;
-  background: #fff;
-  border-radius: var(--radius);
-  padding: 0.7rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 4px 20px rgba(30, 42, 34, 0.12);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text);
-  white-space: nowrap;
-}
-
-.hero-badge .dot {
-  width: 9px;
-  height: 9px;
-  background: #4caf78;
-  border-radius: 50%;
-  animation: pulse 2s ease infinite;
-  flex-shrink: 0;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(1.4); }
-}
 
 /* =========================================================
    FADE-IN UTILITY (used by main.js)
@@ -593,7 +374,6 @@ border: 1px solid rgba(9, 79, 25, 0.3);
 
 /* Column span helpers */
 .proj-item--span2 { grid-column: span 2; }
-.proj-item--span4 { grid-column: span 4; }
 
 /* ================================================================
    CARD
@@ -624,19 +404,6 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   box-shadow: 0 8px 24px rgba(30, 42, 34, 0.15);
 }
 
-/* ── Horizontal variant (Transportation full-width card) ── */
-.proj-card--horizontal {
-  flex-direction: row;
-}
-
-.proj-card--horizontal .proj-thumb {
-  /* Fixed width on the left; text fills the rest */
-  width: 320px;
-  flex-shrink: 0;
-  /* Override the padding-bottom trick used on vertical cards */
-  padding-bottom: 0;
-  min-height: 220px;
-}
 
 .proj-thumb--oxford {
   background-image: url('images/oxford_brookes.jpeg');
@@ -871,17 +638,6 @@ border: 1px solid rgba(9, 79, 25, 0.3);
 
 /* Tablet: 2 columns */
 @media (max-width: 860px) {
-  /* Hero map overlay moves to bottom, smaller */
-  .hero-map-overlay {
-    left: 50%;
-    z-index: 0;
-    transform: translateX(-50%);
-    width: calc(100% - 3rem);
-    max-width: 460px;
-    bottom: 1.5rem;
-    padding: 1.25rem 1.5rem;
-  }
-
   /* Hero info stacks vertically */
   .hero-inner {
     grid-template-columns: 1fr;
@@ -951,7 +707,6 @@ border: 1px solid rgba(9, 79, 25, 0.3);
 /* Mobile / iPhone: 1 column */
 @media (max-width: 480px) {
   nav        { padding: 1rem 4%; }
-  #hero      { min-height: 400px; }
   #hero-info { padding: 6rem 4% 4rem; }
 
   .projects-grid {
@@ -1331,21 +1086,6 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   gap: 0.5rem;
 }
 
-.resume-embed-wrap {
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(30, 42, 34, 0.12);
-  background: #fff;
-}
-
-.resume-embed {
-  width: 100%;
-  height: 80vh;
-  min-height: 500px;
-  display: block;
-  border: none;
-}
-
 /* Resume slide viewer wrapper */
 .resume-slides-wrap {
   border-radius: var(--radius);
@@ -1358,23 +1098,6 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   max-height: 80vh;
 }
 
-.resume-fallback {
-  text-align: center;
-  padding: 1rem;
-  font-size: 0.85rem;
-  color: var(--muted);
-  border-top: 1px solid var(--green-lt);
-}
-
-.resume-fallback a {
-  color: var(--green);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.resume-fallback a:hover {
-  text-decoration: underline;
-}
 
 /* =========================================================
    SLIDE VIEWER
@@ -1457,6 +1180,15 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   border-radius: 999px;
   pointer-events: none;
   backdrop-filter: blur(4px);
+}
+
+/* Single image inside a slides container */
+.slides-single-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 68vh;
+  object-fit: contain;
 }
 
 /* Loading state */
@@ -1622,10 +1354,3 @@ border: 1px solid rgba(9, 79, 25, 0.3);
   #icon-strip.is-strip-gone .icon-strip-item[data-side="right"] { transform: translateX( 100px); }
 }
 
-/* Responsive: resume embed height on mobile */
-@media (max-width: 480px) {
-  .resume-embed {
-    height: 60vh;
-    min-height: 360px;
-  }
-}

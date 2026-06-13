@@ -309,11 +309,22 @@ function loadSlideViewer(src, container) {
     mediaEl.innerHTML = '';   /* clear previous */
 
     if (type === 'slides') {
-      /* ── Horizontal slide viewer(s) using PDF.js ── */
+      /* ── Render src: image or PDF slide viewer ── */
+      const isImage = /\.(jpe?g|png|gif|webp|svg)$/i.test(src);
       const wrap1 = document.createElement('div');
       wrap1.className = 'slides-wrap';
       mediaEl.appendChild(wrap1);
-      loadSlideViewer(src, wrap1);
+
+      if (isImage) {
+        wrap1.classList.add('slides-container');
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = title;
+        img.className = 'slides-single-img';
+        wrap1.appendChild(img);
+      } else {
+        loadSlideViewer(src, wrap1);
+      }
 
       if (src2) {
         const divider = document.createElement('hr');
@@ -481,7 +492,6 @@ function loadSlideViewer(src, container) {
     let   originalSibling = item.nextSibling;
 
     let isDragging  = false;
-    let floater     = null;   /* the fixed-position ghost we drag */
     let offsetX     = 0;
     let offsetY     = 0;
     let isDetached  = false;
